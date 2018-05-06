@@ -1,6 +1,9 @@
 
 import React, { Component } from 'react';
 import Blink from '../Blink';
+import Navigation from '../Navigation'
+import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import {
     Platform,
@@ -11,19 +14,29 @@ import {
 } from 'react-native';
 
 class Home extends Component {
+
+
+    static navigationOptions = {
+        tabBarLabel: 'Home',
+        tabBarIcon: () => <Icon size={24} name="home" color="white" />
+    };
+
+
     render() {
 
         return (
 
             <View style={styles.container}>
                 <Text style={styles.welcome}>
-                    "Welcome to Ledger!"
+                    Welcome to Ledger!
                 </Text>
                 <Text style={styles.instructions}>
                     <Button title={"Create Ledger"} onPress={() => this.props.navigation.navigate('CreateLedger')}
                     />
                 </Text>
+
             </View>
+
         );
     }
 }

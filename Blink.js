@@ -7,6 +7,7 @@ class Blink extends Component {
         super(props);
         this.state = {isShowingText: true};
 
+
         // Toggle the state every second
         setInterval(() => {
             this.setState(previousState => {
@@ -17,6 +18,7 @@ class Blink extends Component {
 
     render() {
         let display = this.state.isShowingText ? this.props.text : ' ';
+
         return (
             <Text>{display}</Text>
         );
