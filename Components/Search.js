@@ -4,9 +4,6 @@ import Blink from '../Blink';
 import EntryCard from '../EntryCard';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../style';
-import TimeAgo from 'react-native-timeago'
-
-import {SwipeableFlatList} from 'react-native-swipeable-flat-list';
 
 
 
@@ -27,17 +24,16 @@ import {
     Image,
     TouchableHighlight,
     TouchableNativeFeedback,
-    TouchableOpacity, AppState
+    TouchableOpacity
 } from 'react-native';
 
+import SearchBar from 'react-native-search-bar'
 
 
 
 
-class ViewEntries extends Component {
 
-
-
+class Search extends Component {
 
 
 
@@ -46,8 +42,9 @@ class ViewEntries extends Component {
 
         return {
             title: params ? params.paramName : 'A Nested Details Screen',
-            tabBarLabel: 'Home',
-            tabBarIcon: () => <Icon size={24} name="home" color="white" />,
+            tabBarLabel: 'Search',
+            tabBarIcon: () => <Icon size={24} name="search" color="white" />,
+
 
         }
     };
@@ -63,13 +60,13 @@ class ViewEntries extends Component {
         entries: [],
         loading: true,
         refreshing:false,
-        isSwiping:false,
+        query: "",
     };
 
     async fetchData() {
         try {
-            const ledgerName = this.props.navigation.state.params.paramName;
-            const url = 'http://localhost:8080/mobile/ledgerList/'+ledgerName;
+            //const ledgerName = this.props.navigation.state.params.paramName;
+            const url = 'http://localhost:8080/mobile/ledgerList/test1.data';
             console.log(url);
             let response = await fetch(url);
             let responseJson = await response.json();
@@ -86,20 +83,7 @@ class ViewEntries extends Component {
 
     componentDidMount(){
         console.log("view entries");
-        AppState.addEventListener('change',this._handleAppStateChange);
-        this.props.navigation.addListener(
-            'didFocus',
-            payload => {
-                console.log('didFocus',payload);
-                this._onRefresh();
-            }
-        );
-        //this._onRefresh()
-    }
-
-    componentWillUnmount() {
-        //this.props.navigation.removeAllListeners();
-        console.log("unmount");
+        this._onRefresh()
     }
 
 
@@ -110,47 +94,29 @@ class ViewEntries extends Component {
         });
     }
 
-    handleDeleteEntry(item) {
-        console.log("delete Entry");
-        console.log(item.EntryID);
-        fetch('http://localhost:8080/mobile/deleteEntry',{
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                EntryID: item.EntryID
-            })
 
-            }).then((response) => console.log(response));
-            //this._onRefresh()
+    handleChangedText(){
+
     }
 
 
 
-
-
     render() {
-
-        const rightButts= [<TouchableHighlight onPress={console.log("damnit carl")}>
-                <Icon size={64} name="delete" color="red" />
-            </TouchableHighlight>];
-
-
         return (
             <View style={styles.container}>
+                <SearchBar
+                    ref='search'
+                    placeholder='Search'
+                    onChangeText={this.handleChangedText}
+                />
                 <FlatList
-                    scrollEnabled={!this.state.isSwiping}
                     data={this.state.entries}
                     renderItem={({item}) => {
 
                         return (
-
-                            <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: item})}>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate("ViewEntryDetails",{paramName:item})}>
                                 <View>
-                                    <Card containerStyle={{padding: 0}}>
+                                    <Card containerStyle={{padding: 0}} >
 
                                         <ListItem
                                             title={item.AccountName}
@@ -158,31 +124,27 @@ class ViewEntries extends Component {
                                                 style: 'currency',
                                                 currency: item.Currency.toString()
                                             }).format(Number(item.Amount))}
-                                            badge={{
-                                                value: new Date(item.Date).toLocaleTimeString(),
-                                                textStyle: {color: 'white'},
-                                                containerStyle: {marginTop: -20}
-                                            }}
+                                            badge = {{value: item.Comment, textStyle: {color: 'white'}, containerStyle: {marginTop: -20}}}
                                         />
                                     </Card>
                                 </View>
                             </TouchableOpacity>
-
-
                         );
                     }}
-
                     //stupid piece of code to stop dumb warnings
                     keyExtractor={() => Math.random().toString(36).substr(2, 9)}
                     refreshing={this.state.refreshing}
                     onRefresh={this._onRefresh.bind(this)}
-                    />
+
+
+                />
+
             </View>
-        )
+        );
     }
 }
 
 
 
 
-module.exports = ViewEntries;
+module.exports = Search;

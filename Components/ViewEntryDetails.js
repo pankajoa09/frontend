@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
 import t from 'tcomb-form-native';
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import styles from '../style';
 
 
 
@@ -21,10 +23,12 @@ import {
 
 class ViewEntryDetails extends Component {
 
+    static navigationOptions = {
+        tabBarLabel: 'Home',
+        tabBarIcon: () => <Icon size={24} name="home" color="white" />
+    };
 
-    componentWillMount(){
 
-    }
 
 
     render() {
@@ -70,36 +74,8 @@ class ViewEntryDetails extends Component {
 
 }
 
-const styles = StyleSheet.create({
-    container: {
-        //justifyContent: 'center',
-        marginTop: 50,
-        padding: 20,
-        flex: 1,
-        paddingTop: 100,
-        backgroundColor: '#ffffff',
-    },
-    welcome: {
-        fontSize: 16,
-        textAlign: 'center',
-        margin: 20,
-    },
 
 
-    label: {
-        fontSize: 16,
-        textAlign: 'left',
-        margin: 0,
-        color: 'darkslategrey',
-
-    },
-    data: {
-        fontSize: 20,
-        textAlign: 'left',
-        margin: 7,
-    }
-
-});
 
 
 module.exports = ViewEntryDetails;

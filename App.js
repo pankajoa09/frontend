@@ -9,13 +9,16 @@ import Button from './Button';
 import Blink from './Blink';
 import Home from './Components/Home';
 
-import CreateLedger from './Components/CreateLedger';
+
 //import DeleteLedger from './Components/DeleteLedger';
-//import ViewLedgers from './Components/ViewLedgers';
+import ViewLedgers from './Components/ViewLedgers';
+//import HomeStack from './Components/HomeStack';
 
 import CreateEntry from './Components/CreateEntry';
 //import EditEntry from './Components/EditEntry';
 //import DeleteEntry from './Components/DeleteEntry';
+import Search from './Components/Search';
+
 import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
@@ -31,36 +34,29 @@ import {
     TabNavigator,
 } from 'react-navigation';
 
-const RootStack = StackNavigator({
-        Home: {screen: Home},
-        CreateLedger: {screen: CreateLedger},
-        //DeleteLedger: {screen: DeleteLedger},
-        //ViewLedgers: {screen: ViewLedgers},
 
-        CreateEntry: {screen: CreateEntry},
-        //EditEntry: {screen: EditEntry},
-        //DeleteEntry: {screen: DeleteEntry},
+
+
+const HomeStack = StackNavigator({
+        ViewLedgers: {screen: ViewLedgers},
+        //CreateEntry: {screen: CreateEntry},
+
         ViewEntries: {screen: ViewEntries},
         ViewEntryDetails: {screen: ViewEntryDetails}
     },
     {
-        initialRouteName: 'Home',
+        initialRouteName: 'ViewLedgers',
     }
 );
 
 
+
+
 const TabNav = TabNavigator(
     {
-        Home: {screen: Home},
-        //CreateLedger: {screen: CreateLedger},
-        //DeleteLedger: {screen: DeleteLedger},
-        //ViewLedgers: {screen: ViewLedgers},
-
+        Home: {screen: HomeStack},
         CreateEntry: {screen: CreateEntry},
-        //EditEntry: {screen: EditEntry},
-        //DeleteEntry: {screen: DeleteEntry},
-        //ViewEntries: {screen: ViewEntries},
-        //ViewEntryDetails: {screen: ViewEntryDetails}
+        Search: {screen: Search}
 
     },
     {
@@ -69,7 +65,7 @@ const TabNav = TabNavigator(
         tabBarOptions: {
             bottomNavigationOptions: {
                 labelColor: 'white',
-                backgroundColor: 'red',
+                backgroundColor: 'dimgrey',
                 rippleColor: 'white',
                 tabs: {
                     Home: {
@@ -77,14 +73,14 @@ const TabNav = TabNavigator(
                         label: 'Home',
 
                     },
-                    ViewEntries: {
-                        barBackgroundColor: 'dimgrey',
-                        label: 'View Entries'
-                    },
                     CreateEntry: {
                         barBackgroundColor: 'dimgrey',
                         label: 'Create Entry'
                     },
+                    Search: {
+                        barBackgroundColor: 'dimgrey',
+                        label: 'Search'
+                    }
 
                 }
             }
@@ -97,6 +93,7 @@ const TabNav = TabNavigator(
 
 
 export default class App extends Component {
+
     render() {
         return <TabNav/>;
     }
