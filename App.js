@@ -5,25 +5,22 @@
  */
 
 import React, { Component } from 'react';
-import Button from './Button';
-import Blink from './Blink';
+
 import Home from './Components/Home';
-
-
-//import DeleteLedger from './Components/DeleteLedger';
 import ViewLedgers from './Components/ViewLedgers';
-//import HomeStack from './Components/HomeStack';
-
 import CreateEntry from './Components/CreateEntry';
 //import EditEntry from './Components/EditEntry';
 //import DeleteEntry from './Components/DeleteEntry';
+
 import Search from './Components/Search';
 
 import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
-import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
+//import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
+
+import Example from './Components/Example';
 
 
 
@@ -38,11 +35,10 @@ import {
 
 
 const HomeStack = StackNavigator({
-        ViewLedgers: {screen: ViewLedgers},
         //CreateEntry: {screen: CreateEntry},
-
+        ViewLedgers: {screen: ViewLedgers},
         ViewEntries: {screen: ViewEntries},
-        ViewEntryDetails: {screen: ViewEntryDetails}
+        ViewEntryDetails: {screen: ViewEntryDetails},
     },
     {
         initialRouteName: 'ViewLedgers',
@@ -56,8 +52,8 @@ const TabNav = TabNavigator(
     {
         Home: {screen: HomeStack},
         CreateEntry: {screen: CreateEntry},
-        Search: {screen: Search}
-
+        Search: {screen: Search},
+        Example: {screen: Example}
     },
     {
         tabBarComponent: NavigationComponent,

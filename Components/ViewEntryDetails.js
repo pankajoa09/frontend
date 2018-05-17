@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 //import Button from '../Button';
 import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
+
 import t from 'tcomb-form-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import styles from '../style';

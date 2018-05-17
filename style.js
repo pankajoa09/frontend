@@ -8,7 +8,16 @@ const {
 
 module.exports = StyleSheet.create({
 
-
+    bigtitle: {
+        fontSize: 18,
+        textAlign: 'left',
+        margin: 7,
+    },
+    subtitle: {
+        fontSize: 14,
+        textAlign: 'left',
+        margin: 7,
+    },
     item: {
         padding: 10,
         fontSize: 18,
