@@ -6,9 +6,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 //import styles from '../style';
 import TimeAgo from 'react-native-timeago'
+import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
 
 
 import { SwipeListView } from 'react-native-swipe-list-view'
+
 
 
 
@@ -48,17 +50,25 @@ class ViewEntries extends Component {
 
         return {
             title: params ? params.paramName : 'A Nested Details Screen',
+            _renderButton: () => <Button
+                onPress={() => console.log("HIIIIE")}
+            />,
             tabBarLabel: 'Home',
             tabBarIcon: () => <Icon size={24} name="home" color="white" />,
 
+
         }
     };
+
+
 
     constructor(props){
         super(props);
         this.ds = new ListView.DataSource({rowHasChanged:(r1,r2)=>r1 !== r2})
         this.state={
+            entries:[],
             refreshing:false, //do i need this? delete when can
+            entriesToDelete:[],
         };
     }
 
@@ -66,7 +76,7 @@ class ViewEntries extends Component {
         entries: [],
         loading: true,
         refreshing:false,
-        listViewData: Array(20).fill('').map((_,i) => ({key: `${i}`, text: `item #${i}`})),
+        entriesToDelete: [],
     };
 
 
@@ -105,6 +115,14 @@ class ViewEntries extends Component {
     componentWillUnmount() {
         //this.props.navigation.removeAllListeners();
         console.log("unmount");
+        this._actuallyDeleteEntries();
+    }
+
+    _actuallyDeleteEntries(){
+        if (!this.state.entriesToDelete.isEmpty){
+            this.state.entriesToDelete.map(_=>this.handleDeleteEntry(_));
+            this.setState({entriesToDelete:[]});
+        }
     }
 
 
@@ -115,9 +133,10 @@ class ViewEntries extends Component {
         });
     }
 
-    handleDeleteEntry(item) {
+    handleDeleteEntry(entryID) {
         console.log("delete Entry");
-        console.log(item.EntryID);
+
+        console.log(entryID);
         fetch('http://localhost:8080/mobile/deleteEntry',{
             method: 'POST',
             headers: {
@@ -125,7 +144,7 @@ class ViewEntries extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                EntryID: item.EntryID
+                EntryID: entryID
             })
 
             }).then((response) => console.log(response));
@@ -139,11 +158,14 @@ class ViewEntries extends Component {
     }
 
     deleteRow(rowMap, rowKey) {
+        console.log(rowKey);
         this.closeRow(rowMap,rowKey)
         const newData = [...this.state.entries]
-        const prevIndex = this.state.entries.findIndex(item => item.key === rowKey);
+        const prevIndex = this.state.entries.findIndex(item => item.EntryID === rowKey);
+        this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)});
         newData.splice(prevIndex,1)
         this.setState({entries:newData})
+
     }
 
     onRowDidOpen = (rowKey, rowMap) => {
@@ -158,89 +180,47 @@ class ViewEntries extends Component {
 
     render() {
 
-        const rightButts= [<TouchableHighlight onPress={console.log("damnit carl")}>
-                <Icon size={64} name="delete" color="red" />
-
-            </TouchableHighlight>];
-
 
         return (
-            /*
-            <View style={styles.container}>
 
-
-                <FlatList
-
-                    data={this.state.entries}
-                    renderItem={({item}) => {
-
-                        return (
-                            <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: item})}>
-                                <View>
-                                    <Card containerStyle={{padding: 0}}>
-
-                                        <ListItem
-                                            title={item.AccountName}
-                                            subtitle={new Intl.NumberFormat('en-GB', {
-                                                style: 'currency',
-                                                currency: item.Currency.toString()
-                                            }).format(Number(item.Amount))}
-                                            badge={{
-                                                value: new Date(item.Date).toLocaleTimeString(),
-                                                textStyle: {color: 'white'},
-                                                containerStyle: {marginTop: -20}
-                                            }}
-                                        />
-                                    </Card>
-                                </View>
-                            </TouchableOpacity>
-
-
-                        );
-                    }}
-
-                    //stupid piece of code to stop dumb warnings
-                    keyExtractor={() => Math.random().toString(36).substr(2, 9)}
-                    refreshing={this.state.refreshing}
-                    onRefresh={this._onRefresh.bind(this)}
-                    />
-            </View>
-            */
-/*
             <SwipeListView
+
                 useFlatList
                 disableRightSwipe={true}
-                data={this.state.listViewData}
+                data={this.state.entries}
                 renderItem={ (data, rowMap) => (
                     <View>
 
                         <TouchableHighlight
-                            onPress={ _ => console.log('You touched me') }
+                            onPress={ _ => this.props.navigation.navigate('ViewEntryDetails',{paramName: data.item}) }
                             style={styles.rowFront}
                             underlayColor={'#CCC'}
                         >
                             <View style={{flex:1}}>
                                 <View style={{flexDirection: 'row',flex:1}}>
                                     <View style={{flex:1}}>
-                                        <Text style={styles.bigtitle}>{data.item.text} </Text>
+                                        <Text style={styles.bigtitle}>{data.item.AccountName} </Text>
                                     </View>
                                     <View style={{flex:1}}>
-                                        <Text style={styles.cornertitle}> 10/24/17 ></Text>
+                                        <Text style={styles.cornertitle}> {new Date(data.item.Date).toLocaleTimeString()} ></Text>
                                     </View>
                                 </View>
-                                <Text style={styles.subtitle}>I am not you tho niggaaaa ggggggggggggggg</Text>
+                                <Text style={styles.subtitle}>{new Intl.NumberFormat('en-GB', {
+                                    style: 'currency',
+                                    currency: data.item.Currency.toString()
+                                }).format(Number(data.item.Amount))}
+                                </Text>
                             </View>
                         </TouchableHighlight>
                         <Divider style={{ backgroundColor: 'lightgrey', }} />
                     </View>
-
-
                 )}
+                //stupid piece of code to stop dumb warnings
+                keyExtractor={() => Math.random().toString(36).substr(2, 9)}
                 renderHiddenItem={ (data, rowMap) => (
                     <View style={styles.rowBack}>
                         <Text>Left</Text>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.closeRow(rowMap, data.item.key) }>
+                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.deleteRow(rowMap, data.item.EntryID) }>
                             <View>
                                 <Icon size={34} name="delete" color="white" />
                                 <Text style={styles.backTextWhite}>Delete</Text>
@@ -251,38 +231,11 @@ class ViewEntries extends Component {
                 leftOpenValue={0}
                 rightOpenValue={-75}
                 onRowDidOpen={this.onRowDidOpen}
+                //stupid piece of code to stop dumb warnings
+                keyExtractor={() => Math.random().toString(36).substr(2, 9)}
             />
-            */
-            <SwipeListView
-                useFlatList
-                data={this.state.entries}
-                renderItem={ (data, rowMap) => (
 
-                    <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: data.item.LedgerName})}>
-                    <View>
-                        <Text style={styles.bigtitle}> {data.item.AccountName}</Text>
-                        <Text style={styles.subtitle}> {new Date(data.item.Date).toLocaleTimeString()} </Text>
-                    </View>
-                    </TouchableOpacity>
-                )}
-                renderHiddenItem={ (data, rowMap) => (
-                    <View style={styles.rowBack}>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.closeRow(rowMap, data.item.key) }>
-                            <Text style={styles.backTextWhite}>Delete</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]} onPress={ _ => this.deleteRow(rowMap, data.item.key) }>
-                            <Text style={styles.backTextWhite}>Not Delete</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-                leftOpenValue={75}
-                rightOpenValue={-150}
-                previewRowKey={'0'}
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
-                onRowDidOpen={this.onRowDidOpen}
-            />
+
         )
     }
 }
@@ -290,18 +243,39 @@ class ViewEntries extends Component {
 
 const styles = StyleSheet.create({
     bigtitle: {
+
         fontSize: 18,
-        textAlign: 'left',
-        margin: 7,
+        fontWeight: '500',
+        fontFamily: 'System',
+        margin: 1,
+        paddingTop: 2.5,
+        paddingLeft: 20,
     },
     subtitle: {
         fontSize: 14,
-        textAlign: 'left',
-        margin: 7,
+        fontWeight: '100',
+        fontFamily: 'System',
+        margin: 1,
+        paddingTop: 2.5,
+        paddingLeft: 20,
+    },
+
+    cornertitle: {
+        textAlign: 'right',
+        fontSize: 18,
+        fontWeight: '100',
+        fontFamily: 'System',
+        color: 'grey',
+        margin: 1,
+        paddingTop: 2.5,
+        paddingRight: 10,
+        marginRight:10,
+
     },
     container: {
         backgroundColor: 'white',
-        flex: 1
+        flex: 1,
+
     },
     standalone: {
         marginTop: 30,
@@ -319,22 +293,26 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 15
+        padding: 15,
     },
     backTextWhite: {
-        color: '#FFF'
+        color: 'white',
+        fontSize: 12,
+        fontWeight: '200',
+        fontFamily: 'System',
     },
     rowFront: {
-        alignItems: 'center',
-        backgroundColor: '#CCC',
-        borderBottomColor: 'black',
+        //flex:1,
+        //alignItems: 'flex-start',
+        backgroundColor: 'white',
+        borderBottomColor: 'white',
         borderBottomWidth: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         height: 50,
     },
     rowBack: {
         alignItems: 'center',
-        backgroundColor: '#CCC',
+        backgroundColor: 'rgb(128, 0, 0)',
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -349,11 +327,12 @@ const styles = StyleSheet.create({
         width: 75
     },
     backRightBtnLeft: {
-        backgroundColor: '#CCC',
-        right: 75
+        backgroundColor: '‎rgb(128, 0, 0)',
+
+        right: 0
     },
     backRightBtnRight: {
-        backgroundColor: '#CCC',
+        backgroundColor: '‎rgb(128, 0, 0)',
         right: 0
     },
     controls: {

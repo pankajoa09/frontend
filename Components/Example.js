@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
 
+
 class Example extends Component {
 
     constructor(props) {
