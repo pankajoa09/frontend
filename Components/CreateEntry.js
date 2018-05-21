@@ -7,12 +7,13 @@ import t from 'tcomb-form-native';
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import styles from '../style';
-
-
-
+import { Keyboard } from 'react-native'
+import currentServerAddress from '../currentServerAddress'
+const address= currentServerAddress.address();
 
 import {
     Platform,
+    ScrollView,
     StyleSheet,
     Text,
     View,
@@ -105,8 +106,9 @@ class CreateEntry extends Component {
 
     handleSubmit = () => {
         const value = this._form.getValue(); // use that ref to get the form value
+        Keyboard.dismiss();
         console.log('value: ', value);
-        fetch('http://localhost:8080/mobile/createEntry', {
+        fetch(address+':8080/mobile/createEntry', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -133,6 +135,7 @@ class CreateEntry extends Component {
 
     render() {
         return (
+            <ScrollView scrollEnabled={true}>
             <View style={styles.container}>
 
             },
@@ -146,6 +149,7 @@ class CreateEntry extends Component {
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableHighlight>
             </View>
+            </ScrollView>
         );
     }
 }

@@ -10,6 +10,11 @@ import { Card, ListItem, Button } from 'react-native-elements'
 
 import { SwipeListView } from 'react-native-swipe-list-view'
 
+
+
+import currentServerAddress from '../currentServerAddress'
+const address= currentServerAddress.address();
+
 import {
     AppRegistry,
     FlatList,
@@ -52,7 +57,7 @@ class ViewLedgers extends Component {
 
     async fetchData() {
         try {
-            let response = await fetch('http://localhost:8080/mobile/ledgerList');
+            let response = await fetch(address+':8080/mobile/ledgerList');
             let responseJson = await response.json();
             console.log(responseJson);
             this.setState({

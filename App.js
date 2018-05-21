@@ -11,16 +11,17 @@ import ViewLedgers from './Components/ViewLedgers';
 import CreateEntry from './Components/CreateEntry';
 //import EditEntry from './Components/EditEntry';
 //import DeleteEntry from './Components/DeleteEntry';
-
 import Search from './Components/Search';
-
 import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
 //import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
+//import Example from './Components/Example';
+import Example2 from './Components/Example2';
 
-import Example from './Components/Example';
+
+
 
 
 
@@ -53,7 +54,7 @@ const TabNav = TabNavigator(
         Home: {screen: HomeStack},
         CreateEntry: {screen: CreateEntry},
         Search: {screen: Search},
-        Example: {screen: Example}
+        Example2: {screen: Example2}
     },
     {
         tabBarComponent: NavigationComponent,

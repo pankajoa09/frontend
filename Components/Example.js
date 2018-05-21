@@ -216,6 +216,7 @@ class Example extends Component {
 
 module.exports = Example;
 
+
 const styles = StyleSheet.create({
     bigtitle: {
 

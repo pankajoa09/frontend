@@ -10,13 +10,11 @@ import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-nati
 
 
 import { SwipeListView } from 'react-native-swipe-list-view'
-
-
-
-
-
+import * as Animatable from 'react-native-animatable';
 
 import { Card, ListItem, Button } from 'react-native-elements'
+import currentServerAddress from '../currentServerAddress'
+const address= currentServerAddress.address();
 
 
 
@@ -31,7 +29,9 @@ import {
     Image,
     TouchableHighlight,
     TouchableNativeFeedback,
-    TouchableOpacity, AppState, Dimensions
+    TouchableOpacity, AppState, Dimensions,
+    Animated,
+    LayoutAnimation,
 } from 'react-native';
 
 
@@ -84,7 +84,7 @@ class ViewEntries extends Component {
     async fetchData() {
         try {
             const ledgerName = this.props.navigation.state.params.paramName;
-            const url = 'http://localhost:8080/mobile/ledgerList/'+ledgerName;
+            const url = address+':8080/mobile/ledgerList/'+ledgerName;
             console.log(url);
             let response = await fetch(url);
             let responseJson = await response.json();
@@ -120,7 +120,7 @@ class ViewEntries extends Component {
 
     _actuallyDeleteEntries(){
         if (!this.state.entriesToDelete.isEmpty){
-            this.state.entriesToDelete.map(_=>this.handleDeleteEntry(_));
+            this.state.entriesToDelete.map(_=>this.deleteEntry(_));
             this.setState({entriesToDelete:[]});
         }
     }
@@ -133,11 +133,11 @@ class ViewEntries extends Component {
         });
     }
 
-    handleDeleteEntry(entryID) {
+    deleteEntry(entryID) {
         console.log("delete Entry");
 
         console.log(entryID);
-        fetch('http://localhost:8080/mobile/deleteEntry',{
+        fetch(address+':8080/mobile/deleteEntry',{
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -157,10 +157,25 @@ class ViewEntries extends Component {
         }
     }
 
-    deleteRow(rowMap, rowKey) {
+    _highlightRow(rowMap,rowKey){
+        console.log('hiihihihihihilihghtt')
+        if (rowMap[rowKey]) {
+            rowMap[rowKey].highlightRow();
+        }
+    }
+
+
+
+    _handleMarkToDeleteRow(rowMap, rowKey) {
+        console.log("mark to delete")
+        this._highlightRow(rowMap,rowKey);
+        this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)});
+    }
+
+    _handleDeleteRow(rowMap, rowKey) {
         console.log(rowKey);
-        this.closeRow(rowMap,rowKey)
-        const newData = [...this.state.entries]
+        this.closeRow(rowMap,rowKey);
+        const newData = [...this.state.entries];
         const prevIndex = this.state.entries.findIndex(item => item.EntryID === rowKey);
         this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)});
         newData.splice(prevIndex,1)
@@ -189,8 +204,8 @@ class ViewEntries extends Component {
                 disableRightSwipe={true}
                 data={this.state.entries}
                 renderItem={ (data, rowMap) => (
-                    <View>
 
+                    <View>
                         <TouchableHighlight
                             onPress={ _ => this.props.navigation.navigate('ViewEntryDetails',{paramName: data.item}) }
                             style={styles.rowFront}
@@ -220,11 +235,11 @@ class ViewEntries extends Component {
                 renderHiddenItem={ (data, rowMap) => (
                     <View style={styles.rowBack}>
                         <Text>Left</Text>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.deleteRow(rowMap, data.item.EntryID) }>
-                            <View>
+                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this._handleMarkToDeleteRow(rowMap, data.item.EntryID) }>
+                            <Animatable.View>
                                 <Icon size={34} name="delete" color="white" />
                                 <Text style={styles.backTextWhite}>Delete</Text>
-                            </View>
+                            </Animatable.View>
                         </TouchableOpacity>
                     </View>
                 )}
