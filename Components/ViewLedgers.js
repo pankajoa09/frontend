@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Blink from '../Blink';
 import EntryCard from '../EntryCard';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-//import styles from '../style';
+import styles from '../style';
 import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
 
 import { Card, ListItem, Button } from 'react-native-elements'
@@ -228,6 +228,7 @@ class ViewLedgers extends Component {
 }
 
 
+/*
 const styles = StyleSheet.create({
     bigtitle: {
 
@@ -339,6 +340,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width / 4,
     }
 });
+*/
 
 module.exports = ViewLedgers;
 

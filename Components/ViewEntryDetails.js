@@ -6,7 +6,7 @@ import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-nati
 
 import t from 'tcomb-form-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import styles from '../style';
+import styles from '../styleForEntryDetails';
 
 
 
@@ -51,7 +51,7 @@ class ViewEntryDetails extends Component {
                 <Divider style={{ backgroundColor: 'lightgrey', }} />
                 <Text style={styles.data}>{entry.AccountID}</Text>
 
-                <Text style={styles.  label}>Amount</Text>
+                <Text style={styles.label}>Amount</Text>
                 <Divider style={{ backgroundColor: 'lightgrey', }} />
                 <Text style={styles.data}>{new Intl.NumberFormat('en-GB', {
                     style: 'currency',

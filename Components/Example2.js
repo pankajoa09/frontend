@@ -10,6 +10,7 @@ class Example2 extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+                <Button onPress={_=>console.log("fuck ass")} title={"fuck me"}/>
             <TouchableWithoutFeedback onPress={() => this.text.transitionTo({ opacity: 0.2 })}>
                 <Animatable.Text  ref={this.handleTextRef}>Fade me!</Animatable.Text>
             </TouchableWithoutFeedback>
