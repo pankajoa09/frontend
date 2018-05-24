@@ -51,11 +51,14 @@ class ViewEntries extends Component {
     };
 
 
+
+
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
             title: params ? params.paramName : 'A Nested Details Screen',
-            headerRight: <Button style={styles.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
+            //headerRight:  params.nothingToUndo ? "" : <Button style={styles.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
+            headerRight: params ? params.headerRight : undefined,
             tabBarLabel: 'Home',
             tabBarIcon: () => <Icon size={24} name="home" color="white" />,
 
@@ -64,10 +67,13 @@ class ViewEntries extends Component {
 
     componentDidMount(){
         console.log("view entries");
+
         this.props.navigation.setParams({
-            handleThis: this.refreshHandler
+            handleThis: this.refreshHandler,
+            nothingToUndo: this.ifEntriesToDelete(),
+            headerRight: null,
         });
-        AppState.addEventListener('change',this._handleAppStateChange);
+
         this.props.navigation.addListener(
             'didFocus',
             payload => {
@@ -82,6 +88,24 @@ class ViewEntries extends Component {
             entriesToDelete:[],
         });
         this._onRefresh();
+    };
+
+    ifEntriesToDelete = () => {
+        console.log("fi no entires to delete");
+        console.log(this.state.entriesToDelete);
+        //what the dick is this warning
+        console.log(this.state.entriesToDelete.length);
+        //dunno why -1 but yolo, tried indexing from 0.
+        if (this.state.entriesToDelete.length > -1){
+            this.addHeaderRightButton();
+        }
+    };
+
+    addHeaderRightButton = () => {
+        console.log("remove header right button");
+        this.props.navigation.setParams({
+            headerRight: <Button style={styles.button} title={"Undo"} onPress={()=>this.refreshHandler()}/>,
+        })
     };
 
 
@@ -164,7 +188,8 @@ class ViewEntries extends Component {
         const prevIndex = this.state.entries.findIndex(item => item.EntryID === rowKey);
         this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)});
         newData.splice(prevIndex,1);
-        this.setState({entries:newData})
+        this.setState({entries:newData});
+        this.ifEntriesToDelete();
 
     }
 
@@ -179,7 +204,6 @@ class ViewEntries extends Component {
     render() {
         return (
             <SwipeListView
-
                 useFlatList
                 disableRightSwipe={true}
                 data={this.state.entries}
