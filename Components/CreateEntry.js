@@ -6,7 +6,7 @@ import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elemen
 import t from 'tcomb-form-native';
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import styles from '../style';
+import styles from '../styleForEntryDetails';
 import { Keyboard } from 'react-native'
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();

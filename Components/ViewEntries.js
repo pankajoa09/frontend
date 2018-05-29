@@ -240,10 +240,10 @@ class ViewEntries extends Component {
                     <View style={styles.rowBack}>
                         <Text>Left</Text>
                         <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this._handleDeleteRow(rowMap, data.item.EntryID) }>
-                            <Animatable.View>
+                            <View>
                                 <Icon size={34} name="delete" color="white" />
                                 <Text style={styles.backTextWhite}>Delete</Text>
-                            </Animatable.View>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 )}

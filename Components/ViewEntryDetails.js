@@ -34,18 +34,14 @@ class ViewEntryDetails extends Component {
 
     render() {
         const entry = this.props.navigation.state.params.paramName;
-        console.log(entry.Date);
         const datee = new Date(String(entry.Date));
-        console.log("here look");
-        console.log(datee);
-        console.log("---thats it");
-
-
-        //console.log(new Intl.DateTimeFormat('en-US').format(Date(entry.Date.toString())));
 
 
         return (
             <View style={styles.container}>
+                <Text style={styles.label}>Ledger</Text>
+                <Divider style={{ backgroundColor: 'lightgrey', }} />
+                <Text style={styles.data}>{entry.Filename}</Text>
 
                 <Text style={styles.label}>Account Path</Text>
                 <Divider style={{ backgroundColor: 'lightgrey', }} />
