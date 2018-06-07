@@ -4,9 +4,11 @@ import React, { Component } from 'react';
 import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import t from 'tcomb-form-native';
+import react-native-image-picker-form;
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import styles from '../styleForEntryDetails';
 import { Keyboard } from 'react-native'
+
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
 

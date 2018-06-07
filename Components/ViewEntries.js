@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../style';
-import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
+import { FormLabel, FormInput, FormValidationMessage, Divider, ListItem } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view'
 import * as Animatable from 'react-native-animatable';
 
@@ -220,10 +220,64 @@ class ViewEntries extends Component {
         },2000);
     };
 
+    ehh(props){
+        return(
+            <Text>{props}</Text>
+        )
+    }
+
+    totalAmountForCurrency(ent,curr){
+        return ent.filter(x=>(x.Currency===curr)).map(_=>_.Amount).reduce((a,b)=>a+b,0)
+    }
+
+
+
+
+
+    totalPart(entriess){
+        console.log("ehhhh");
+        var item = {curr:"ASS",amt:23};
+        const entries = this.state.entries;
+        const allCurrencies = entries.map(x=>x.Currency).filter((v,i,a)=>a.indexOf(v)===i); //get all unique currencies
+        const currTuple = allCurrencies.map((curr)=> ({key:curr, totalForCurrency:this.totalAmountForCurrency(entries,curr)}));
+        console.log(smth);
+
+        const red = 'rgb(184, 199, 211)';
+        const blue = 'rgb(76,232,76)';
+        return(
+            <View style={{backgroundColor:red,height:currTuple.length*30}}>
+                <View style={{flex:1}}>
+                    <View style={{flexDirection:'row',flex:1}}>
+                        <View style={{flex:1}}>
+                            <FlatList
+                                data={currTuple}
+                                renderItem={({item}) =>
+                                    <Text style={styles.bigtitle}>{new Intl.NumberFormat('en-GB', {
+                                    style: 'currency',
+                                    currency: item.key,
+                                }).format(item.totalForCurrency)}
+                                </Text>}
+                            />
+
+
+
+                        </View>
+                        <View style={{flex:1}}>
+                            <Text style={styles.cornertitle}> TOTAL </Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+
+
 
     render() {
+
         return (
-            
+            <View>
             <SwipeListView
                 refreshControl={
                     <RefreshControl
@@ -280,14 +334,25 @@ class ViewEntries extends Component {
                 onRowDidOpen={this.onRowDidOpen}
                 //stupid piece of code to stop dumb warnings
                 keyExtractor={() => Math.random().toString(36).substr(2, 9)}
+
             />
 
 
+                {this.totalPart("ehh")}
 
 
+
+
+
+
+            </View>
 
         )
     }
+
+
+
+
 }
 
 
