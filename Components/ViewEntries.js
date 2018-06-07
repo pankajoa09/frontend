@@ -26,6 +26,7 @@ import {
     TouchableOpacity, AppState, Dimensions,
     Animated,
     LayoutAnimation,
+    RefreshControl
 } from 'react-native';
 
 
@@ -67,6 +68,7 @@ class ViewEntries extends Component {
 
     componentDidMount(){
         console.log("view entries");
+        console.log(this.props.navigation.state.params.paramName);
 
         this.props.navigation.setParams({
             handleThis: this.refreshHandler,
@@ -88,31 +90,42 @@ class ViewEntries extends Component {
             entriesToDelete:[],
         });
         this._onRefresh();
+
     };
 
     ifEntriesToDelete = () => {
-        console.log("fi no entires to delete");
+        console.log("if no entires to delete");
         console.log(this.state.entriesToDelete);
         //what the dick is this warning
         console.log(this.state.entriesToDelete.length);
         //dunno why -1 but yolo, tried indexing from 0.
-        if (this.state.entriesToDelete.length > -1){
+        if (this.state.entriesToDelete.length > 0){
             this.addHeaderRightButton();
+        }
+        else{
+            this.removeHeaderRightButton();
         }
     };
 
     addHeaderRightButton = () => {
-        console.log("remove header right button");
+        console.log("add header right button");
         this.props.navigation.setParams({
             headerRight: <Button style={styles.button} title={"Undo"} onPress={()=>this.refreshHandler()}/>,
         })
     };
 
+    removeHeaderRightButton = () => {
+        console.log("remove right header");
+        this.props.navigation.setParams({
+            headerRight: undefined
+        });
+    };
+
 
     async fetchData() {
         try {
-            const ledgerName = this.props.navigation.state.params.paramName;
-            const url = address+':8080/mobile/ledgerList/'+ledgerName;
+            const Ledger = this.props.navigation.state.params.paramName;
+            const url = address+':8080/mobile/ledgerList/'+Ledger;
             console.log(url);
             let response = await fetch(url);
             let responseJson = await response.json();
@@ -152,7 +165,9 @@ class ViewEntries extends Component {
             this.setState({
                 refreshing: false,
             });
+            this.ifEntriesToDelete();
         });
+
     }
 
 
@@ -181,15 +196,20 @@ class ViewEntries extends Component {
         }
     }
 
+
+
     _handleDeleteRow(rowMap, rowKey) {
         console.log(rowKey);
         this.closeRow(rowMap,rowKey);
         const newData = [...this.state.entries];
         const prevIndex = this.state.entries.findIndex(item => item.EntryID === rowKey);
-        this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)});
-        newData.splice(prevIndex,1);
-        this.setState({entries:newData});
-        this.ifEntriesToDelete();
+        this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)},
+            () => {
+                newData.splice(prevIndex,1);
+                this.setState({entries:newData});
+                this.ifEntriesToDelete();
+            });
+
 
     }
 
@@ -203,7 +223,15 @@ class ViewEntries extends Component {
 
     render() {
         return (
+            
             <SwipeListView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh.bind(this)}
+                    />
+                }
+
                 useFlatList
                 disableRightSwipe={true}
                 data={this.state.entries}
@@ -253,6 +281,9 @@ class ViewEntries extends Component {
                 //stupid piece of code to stop dumb warnings
                 keyExtractor={() => Math.random().toString(36).substr(2, 9)}
             />
+
+
+
 
 
         )

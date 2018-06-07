@@ -60,7 +60,7 @@ module.exports = StyleSheet.create({
         color: 'white',
         alignSelf: 'center'
     },
-    button: {
+    blueButton: {
         height: 36,
         backgroundColor: '#48BBEC',
         borderColor: '#48BBEC',
@@ -70,5 +70,16 @@ module.exports = StyleSheet.create({
         alignSelf: 'stretch',
         justifyContent: 'center'
     },
+    redButton: {
+        height: 36,
+        backgroundColor: '#db0404',
+        borderColor: '#db0404',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 10,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
+    },
+
 
 });

@@ -119,9 +119,9 @@ class ViewLedgers extends Component {
     }
 
 
-    handleDeleteLedger(ledgerName){
+    handleDeleteLedger(Ledger){
         console.log("delete Ledger");
-        console.log(ledgerName);
+        console.log(Ledger);
         fetch('http://localhost:8080/mobile/deleteLedger',{
             method: 'POST',
             headers: {
@@ -129,7 +129,7 @@ class ViewLedgers extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                LedgerName: ledgerName
+                Ledger: Ledger
             })
 
         }).then((response) => console.log(response));
@@ -156,7 +156,7 @@ class ViewLedgers extends Component {
         console.log(rowKey);
         this.closeRow(rowMap,rowKey);
         const newData = [...this.state.ledgers];
-        const prevIndex = this.state.ledgers.findIndex(item => item.LedgerName === rowKey);
+        const prevIndex = this.state.ledgers.findIndex(item => item.Ledger === rowKey);
         this.setState({ledgersToDelete: this.state.ledgersToDelete.concat(rowKey)});
         newData.splice(prevIndex,1);
         this.setState({ledgers:newData})
@@ -192,14 +192,14 @@ class ViewLedgers extends Component {
 
                     <View>
                         <TouchableHighlight
-                            onPress={()=>this.props.navigation.navigate("ViewEntries",{paramName: data.item.LedgerName})}
+                            onPress={()=>this.props.navigation.navigate("ViewEntries",{paramName: data.item.Ledger})}
                             style={styles.rowFront}
                             underlayColor={'#CCC'}
                         >
                             <View style={{flex:1}}>
                                 <View style={{flexDirection: 'row',flex:1}}>
                                     <View style={{flex:1}}>
-                                        <Text style={styles.bigtitle}>{data.item.LedgerName} </Text>
+                                        <Text style={styles.bigtitle}>{data.item.Ledger} </Text>
                                     </View>
                                     <View style={{flex:1}}>
                                         <Text style={styles.cornertitle}> ></Text>
@@ -217,7 +217,7 @@ class ViewLedgers extends Component {
                 renderHiddenItem={ (data, rowMap) => (
                     <View style={styles.rowBack}>
                         <Text>Left</Text>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.deleteRow(rowMap, data.item.LedgerName) }>
+                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.deleteRow(rowMap, data.item.Ledger) }>
                             <View>
                                 <Icon size={34} name="delete" color="white" />
                                 <Text style={styles.backTextWhite}>Delete</Text>

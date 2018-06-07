@@ -5,7 +5,7 @@
                 renderItem={ (data, rowMap) => (
 
                     <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: data.item.LedgerName})}>
+                    onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: data.item.Ledger})}>
                     <View>
                         <Text style={styles.bigtitle}> {data.item.AccountName}</Text>
                         <Text style={styles.subtitle}> {new Date(data.item.Date).toLocaleTimeString()} </Text>

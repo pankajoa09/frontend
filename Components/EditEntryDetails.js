@@ -69,7 +69,7 @@ const options = {
             error: 'Insert valid Comment'
         },
         Date: {
-            hidden: true
+            hidden: false
         },
         terms: {
             label: 'Agree to Terms',
@@ -82,21 +82,36 @@ const options = {
 
 
 
-class CreateEntry extends Component {
+class EditEntryDetails extends Component {
 
 
 
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
-            title: 'Create Entry',
-            //headerRight:  params.nothingToUndo ? "" : <Button style={styles.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
-            headerRight: params ? params.headerRight : undefined,
-            tabBarLabel: 'FUCKKK',
-            tabBarIcon: () => <Icon size={24} name="add-circle-outline" color="white" />,
+            title: 'Edit Entry',
+            tabBarLabel: 'Edit Entry',
+            tabBarIcon: () => <Icon size={24} name="home" color="white" />,
 
         }
     };
+
+    constructor(props){
+        super(props);
+        const originalEntryValues = this.props.navigation.state.params.paramName;
+        console.log(originalEntryValues);
+        this.state={
+            value: {
+                Ledger: originalEntryValues.Ledger,
+                AccountID: originalEntryValues.AccountID,
+                Amount: originalEntryValues.Amount,
+                Currency: originalEntryValues.Currency,
+                Comment: originalEntryValues.Comment,
+                //Date: originalEntryValues.Date
+            }
+
+        }
+    }
 
 
 
@@ -107,15 +122,37 @@ class CreateEntry extends Component {
             Amount: 0,
             Currency: 'THB',
             Comment: '',
+            Date: ''
         }
     };
 
+
+    deleteEntry(entryID) {
+        console.log("delete Entry");
+
+        console.log(entryID);
+        fetch(address+':8080/mobile/deleteEntry',{
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                EntryID: entryID
+            })
+
+        }).then((response) => console.log(response));
+        //this._onRefresh()
+    }
 
 
 
 
     handleSubmit = () => {
+
         const value = this._form.getValue(); // use that ref to get the form value
+        console.log("handle edit submit");
+        this.deleteEntry(this.props.navigation.state.params.paramName.EntryID);
         Keyboard.dismiss();
         console.log('value: ', value);
         fetch(address+':8080/mobile/createEntry', {
@@ -146,19 +183,19 @@ class CreateEntry extends Component {
     render() {
         return (
             <ScrollView scrollEnabled={true}>
-            <View style={styles.container}>
+                <View style={styles.container}>
 
-            },
-                <Form
-                    ref={component => this._form = component} //wtf is this shit pls dont delete it works
-                    type={Ledger}
-                    options={options} // pass the options via props
-                    value={this.state.value}
-                />
-                <TouchableHighlight style={styles.blueButton} onPress={this.handleSubmit} underlayColor='#99d9f4'>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableHighlight>
-            </View>
+                    },
+                    <Form
+                        ref={component => this._form = component} //wtf is this shit pls dont delete it works
+                        type={Ledger}
+                        options={options} // pass the options via props
+                        value={this.state.value}
+                    />
+                    <TouchableHighlight style={styles.blueButton} onPress={this.handleSubmit} underlayColor='#99d9f4'>
+                        <Text style={styles.buttonText}>Save Changes</Text>
+                    </TouchableHighlight>
+                </View>
             </ScrollView>
         );
     }
@@ -167,4 +204,4 @@ class CreateEntry extends Component {
 
 
 
-module.exports = CreateEntry;
+module.exports = EditEntryDetails;

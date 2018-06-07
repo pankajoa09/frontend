@@ -9,12 +9,11 @@ import React, { Component } from 'react';
 import Home from './Components/Home';
 import ViewLedgers from './Components/ViewLedgers';
 import CreateEntry from './Components/CreateEntry';
-//import EditEntry from './Components/EditEntry';
+import EditEntryDetails from './Components/EditEntryDetails';
 //import DeleteEntry from './Components/DeleteEntry';
 import Search from './Components/Search';
 import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
-//import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
 //import Example from './Components/Example';
@@ -36,15 +35,20 @@ import {
 
 
 const HomeStack = StackNavigator({
-        //CreateEntry: {screen: CreateEntry},
+
         ViewLedgers: {screen: ViewLedgers},
         ViewEntries: {screen: ViewEntries},
         ViewEntryDetails: {screen: ViewEntryDetails},
+        EditEntryDetails: {screen: EditEntryDetails},
     },
     {
         initialRouteName: 'ViewLedgers',
     }
 );
+
+const CreateEntryStack = StackNavigator({
+    CreateEntry: {screen: CreateEntry}
+});
 
 
 
@@ -52,7 +56,7 @@ const HomeStack = StackNavigator({
 const TabNav = TabNavigator(
     {
         Home: {screen: HomeStack},
-        CreateEntry: {screen: CreateEntry},
+        CreateEntry: {screen: CreateEntryStack},
         Search: {screen: Search},
         Example2: {screen: Example2}
     },
@@ -64,6 +68,7 @@ const TabNav = TabNavigator(
                 labelColor: 'white',
                 backgroundColor: 'dimgrey',
                 rippleColor: 'white',
+
                 tabs: {
                     Home: {
                         barBackgroundColor: 'dimgrey',
@@ -78,6 +83,7 @@ const TabNav = TabNavigator(
                         barBackgroundColor: 'dimgrey',
                         label: 'Search'
                     }
+
 
                 }
             }
