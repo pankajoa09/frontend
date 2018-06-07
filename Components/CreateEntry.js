@@ -4,10 +4,11 @@ import React, { Component } from 'react';
 import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import t from 'tcomb-form-native';
-import react-native-image-picker-form;
+
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import styles from '../styleForEntryDetails';
-import { Keyboard } from 'react-native'
+import styles2 from '../style.js'
+import { Keyboard, TouchableOpacity } from 'react-native'
 
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
@@ -41,6 +42,11 @@ const Ledger = t.struct({
     Comment: t.maybe(t.String),
 
 });
+
+const Command = t.struct({
+    Command: t.String,
+    Date: t.Date
+})
 
 const options = {
     fields: {
@@ -80,6 +86,14 @@ const options = {
     },
 };
 
+const optionsBasic = {
+    fields: {
+        Date: {
+            hidden: true
+        },
+    },
+};
+
 
 
 
@@ -94,11 +108,13 @@ class CreateEntry extends Component {
             title: 'Create Entry',
             //headerRight:  params.nothingToUndo ? "" : <Button style={styles.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
             headerRight: params ? params.headerRight : undefined,
-            tabBarLabel: 'FUCKKK',
+            tabBarLabel: 'Create Entry',
             tabBarIcon: () => <Icon size={24} name="add-circle-outline" color="white" />,
 
         }
     };
+
+
 
 
 
@@ -109,7 +125,11 @@ class CreateEntry extends Component {
             Amount: 0,
             Currency: 'THB',
             Comment: '',
-        }
+        },
+        valueBasic:{
+            Command: '',
+        },
+        listType: 'Basic'
     };
 
 
@@ -142,15 +162,77 @@ class CreateEntry extends Component {
 
 
 
+    handleSubmitBasic = () => {
+        const valueBasic = this._form.getValue(); // use that ref to get the form value
+        console.log("COMMAND ENTRY");
+        Keyboard.dismiss();
+        console.log('value: ', valueBasic);
+        fetch(address+':8080/mobile/handleCommand', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Command: valueBasic.Command,
+                Date: valueBasic.Date
+            })
+        }).then((response) => {
+            console.log(response);
+            const Ledger = response.headers.map.ledger[0];
+            console.log(Ledger);
+            this.props.navigation.navigate("ViewEntries", {paramName: Ledger})
+        });
+
+
+    };
+
+
+
 
 
 
     render() {
         return (
+            <View style={styles.container}>
+            <View style={styles2.controls}>
+                <View style={styles2.switchContainer}>
+                    { ['QuickAdd', 'Advanced'].map( type => (
+                        <TouchableOpacity
+                            key={type}
+                            style={[
+                                styles.switch,
+                                {backgroundColor: this.state.listType === type ? '#99d9f4' : 'white'}
+                            ]}
+                            onPress={ _ => this.setState({listType: type}) }
+                        >
+                            <Text style={{color:'dimgrey',fontSize:15}}>{type}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </View>
+        {
+            this.state.listType === 'QuickAdd' &&
+            <ScrollView scrollEnabled={true}>
+                <View style={styles.container}>
+
+                    <Form
+                        ref={component => this._form = component}
+                        type={Command}
+                        options={options}
+                        value={this.state.valueBasic}
+                    />
+                    <TouchableHighlight style={styles.blueButton} onPress={this.handleSubmitBasic} underlayColor='#99d9f4'>
+                        <Text style={styles.buttonText}>Create Entry</Text>
+                    </TouchableHighlight>
+                </View>
+            </ScrollView>
+        }
+
+        {
+            this.state.listType === 'Advanced' &&
             <ScrollView scrollEnabled={true}>
             <View style={styles.container}>
-
-            },
                 <Form
                     ref={component => this._form = component} //wtf is this shit pls dont delete it works
                     type={Ledger}
@@ -162,6 +244,8 @@ class CreateEntry extends Component {
                 </TouchableHighlight>
             </View>
             </ScrollView>
+        }
+            </View>
         );
     }
 }

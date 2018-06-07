@@ -220,28 +220,15 @@ class ViewEntries extends Component {
         },2000);
     };
 
-    ehh(props){
-        return(
-            <Text>{props}</Text>
-        )
-    }
+
 
     totalAmountForCurrency(ent,curr){
         return ent.filter(x=>(x.Currency===curr)).map(_=>_.Amount).reduce((a,b)=>a+b,0)
     }
 
-
-
-
-
-    totalPart(entriess){
-        console.log("ehhhh");
-        var item = {curr:"ASS",amt:23};
-        const entries = this.state.entries;
+    totalPart(entries){
         const allCurrencies = entries.map(x=>x.Currency).filter((v,i,a)=>a.indexOf(v)===i); //get all unique currencies
-        const currTuple = allCurrencies.map((curr)=> ({key:curr, totalForCurrency:this.totalAmountForCurrency(entries,curr)}));
-        console.log(smth);
-
+        const currTuple = allCurrencies.map((curr)=> ({key:curr, totalForCurrency:this.totalAmountForCurrency(entries,curr)}))
         const red = 'rgb(184, 199, 211)';
         const blue = 'rgb(76,232,76)';
         return(
@@ -258,9 +245,6 @@ class ViewEntries extends Component {
                                 }).format(item.totalForCurrency)}
                                 </Text>}
                             />
-
-
-
                         </View>
                         <View style={{flex:1}}>
                             <Text style={styles.cornertitle}> TOTAL </Text>
@@ -338,7 +322,7 @@ class ViewEntries extends Component {
             />
 
 
-                {this.totalPart("ehh")}
+                {this.totalPart(this.state.entries)}
 
 
 

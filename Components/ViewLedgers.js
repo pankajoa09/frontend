@@ -155,11 +155,13 @@ class ViewLedgers extends Component {
 
         console.log(rowKey);
         this.closeRow(rowMap,rowKey);
+
         const newData = [...this.state.ledgers];
         const prevIndex = this.state.ledgers.findIndex(item => item.Ledger === rowKey);
         this.setState({ledgersToDelete: this.state.ledgersToDelete.concat(rowKey)});
         newData.splice(prevIndex,1);
-        this.setState({ledgers:newData})
+        this.setState({ledgers:newData});
+        this.handleDeleteLedger(rowKey);
 
     }
 

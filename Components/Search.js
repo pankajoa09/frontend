@@ -252,6 +252,38 @@ class Search extends Component {
 
 
 
+    totalAmountForCurrency(ent,curr){
+        return ent.filter(x=>(x.Currency===curr)).map(_=>_.Amount).reduce((a,b)=>a+b,0)
+    }
+    totalPart(entries){
+        const allCurrencies = entries.map(x=>x.Currency).filter((v,i,a)=>a.indexOf(v)===i); //get all unique currencies
+        const currTuple = allCurrencies.map((curr)=> ({key:curr, totalForCurrency:this.totalAmountForCurrency(entries,curr)}))
+        const red = 'rgb(184, 199, 211)';
+        const blue = 'rgb(76,232,76)';
+        return(
+            <View style={{backgroundColor:red,height:currTuple.length*30}}>
+                <View style={{flex:1}}>
+                    <View style={{flexDirection:'row',flex:1}}>
+                        <View style={{flex:1}}>
+                            <FlatList
+                                data={currTuple}
+                                renderItem={({item}) =>
+                                    <Text style={styles.bigtitle}>{new Intl.NumberFormat('en-GB', {
+                                        style: 'currency',
+                                        currency: item.key,
+                                    }).format(item.totalForCurrency)}
+                                    </Text>}
+                            />
+                        </View>
+                        <View style={{flex:1}}>
+                            <Text style={styles.cornertitle}> TOTAL </Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
 
     render() {
         //const items = this.fetchData();
@@ -288,10 +320,10 @@ class Search extends Component {
                                     <View style={{flex:1}}>
                                         <View style={{flexDirection: 'row',flex:1}}>
                                             <View style={{flex:1}}>
-                                                <Text style={styles.bigtitle}>{data.item.AccountName} </Text>
+                                                <Text style={styles.bigtitle}>{data.item.AccountID} </Text>
                                             </View>
                                             <View style={{flex:1}}>
-                                                <Text style={styles.cornertitle}> {new Date(data.item.Date).toLocaleTimeString()} ></Text>
+                                                <Text style={styles.cornertitle}> {new Date(data.item.Date).toLocaleDateString()} ></Text>
                                             </View>
                                         </View>
                                         <Text style={styles.subtitle}>{new Intl.NumberFormat('en-GB', {
@@ -326,6 +358,7 @@ class Search extends Component {
 
 
                 </View>
+                {this.totalPart(this.state.results)}
                 <SearchBar
                     ref={(ref) => this.searchBar = ref}
                     data={this.state.entries}
