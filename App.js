@@ -16,9 +16,9 @@ import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
-//import Example from './Components/Example';
-import Example2 from './Components/Example2';
-
+import Example from './Components/Example2';
+//import Example2 from './Components/Example';
+//import Example2 from './Components/PieChartMultipleView';
 
 
 
@@ -58,7 +58,7 @@ const TabNav = TabNavigator(
         Home: {screen: HomeStack},
         CreateEntry: {screen: CreateEntryStack},
         Search: {screen: Search},
-        Example2: {screen: Example2}
+        Example: {screen: Example}
     },
     {
         tabBarComponent: NavigationComponent,

@@ -5,7 +5,7 @@ import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 import t from 'tcomb-form-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import styles from '../styleForEntryDetails';
+import styles from '../styleSheets/EntryDetails_style';
 import { Keyboard } from 'react-native'
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();

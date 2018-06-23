@@ -1,10 +1,13 @@
 
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import styles from '../style';
+import styles from '../styleSheets/General_style';
 import { FormLabel, FormInput, FormValidationMessage, Divider, ListItem } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view'
 import * as Animatable from 'react-native-animatable';
+//import RNShakeEvent from 'react-native-shake-event';
+import helperFunctions from './HelperFunctions';
+
 
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
@@ -54,11 +57,12 @@ class ViewEntries extends Component {
 
 
 
+
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
             title: params ? params.paramName : 'A Nested Details Screen',
-            //headerRight:  params.nothingToUndo ? "" : <Button style={styles.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
+            //headerRight:  params.nothingToUndo ? "" : <Button style={entry_details.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
             headerRight: params ? params.headerRight : undefined,
             tabBarLabel: 'Home',
             tabBarIcon: () => <Icon size={24} name="home" color="white" />,
@@ -110,7 +114,7 @@ class ViewEntries extends Component {
     addHeaderRightButton = () => {
         console.log("add header right button");
         this.props.navigation.setParams({
-            headerRight: <Button style={styles.button} title={"Undo"} onPress={()=>this.refreshHandler()}/>,
+            headerRight: <Button style={styles.button} title={"Confirm"} onPress={()=>this._actuallyDeleteEntries()}/>,
         })
     };
 
@@ -142,12 +146,18 @@ class ViewEntries extends Component {
 
 
 
-
+    componentWillMount() {
+        //RNShakeEvent.addEventListener('shake',() => {
+//            console.log("Device Shook: Undo Delete");
+//            this.refreshHandler();
+//        })
+    }
 
     componentWillUnmount() {
         //this.props.navigation.removeAllListeners();
         console.log("unmount");
         this._actuallyDeleteEntries();
+        //RNShakeEvent.removeEventListener('shake');
 
     }
 
@@ -227,12 +237,16 @@ class ViewEntries extends Component {
     }
 
     totalPart(entries){
-        const allCurrencies = entries.map(x=>x.Currency).filter((v,i,a)=>a.indexOf(v)===i); //get all unique currencies
-        const currTuple = allCurrencies.map((curr)=> ({key:curr, totalForCurrency:this.totalAmountForCurrency(entries,curr)}))
-        const red = 'rgb(184, 199, 211)';
-        const blue = 'rgb(76,232,76)';
+
+
+        const currTuple = helperFunctions.getUniqueAndTally(entries,'Currency');
+        const sumZero = currTuple.map(_=>_.value).reduce((a,b)=>a+b,0)===0;
+        const red = 'rgb(255, 204, 204)';
+        const blue = 'rgb(200, 221, 247)';
+        const chosenColor =(sumZero ? blue : red); //if tallied blue else red
+        const comment = (sumZero ? "" : "TO BALANCE");
         return(
-            <View style={{backgroundColor:red,height:currTuple.length*30}}>
+            <View style={{backgroundColor:chosenColor,height:currTuple.length*30}}>
                 <View style={{flex:1}}>
                     <View style={{flexDirection:'row',flex:1}}>
                         <View style={{flex:1}}>
@@ -242,12 +256,12 @@ class ViewEntries extends Component {
                                     <Text style={styles.bigtitle}>{new Intl.NumberFormat('en-GB', {
                                     style: 'currency',
                                     currency: item.key,
-                                }).format(item.totalForCurrency)}
+                                }).format(item.value)}
                                 </Text>}
                             />
                         </View>
                         <View style={{flex:1}}>
-                            <Text style={styles.cornertitle}> TOTAL </Text>
+                            <Text style={styles.cornertitle}> {comment} </Text>
                         </View>
                     </View>
                 </View>

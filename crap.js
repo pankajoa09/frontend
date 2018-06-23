@@ -7,18 +7,18 @@
                     <TouchableOpacity
                     onPress={() => this.props.navigation.navigate("ViewEntryDetails", {paramName: data.item.Ledger})}>
                     <View>
-                        <Text style={styles.bigtitle}> {data.item.AccountName}</Text>
-                        <Text style={styles.subtitle}> {new Date(data.item.Date).toLocaleTimeString()} </Text>
+                        <Text style={entry_details.bigtitle}> {data.item.AccountName}</Text>
+                        <Text style={entry_details.subtitle}> {new Date(data.item.Date).toLocaleTimeString()} </Text>
                     </View>
                     </TouchableOpacity>
                 )}
                 renderHiddenItem={ (data, rowMap) => (
-                    <View style={styles.rowBack}>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={ _ => this.closeRow(rowMap, data.item.key) }>
-                            <Text style={styles.backTextWhite}>Delete</Text>
+                    <View style={entry_details.rowBack}>
+                        <TouchableOpacity style={[entry_details.backRightBtn, entry_details.backRightBtnLeft]} onPress={ _ => this.closeRow(rowMap, data.item.key) }>
+                            <Text style={entry_details.backTextWhite}>Delete</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]} onPress={ _ => this.deleteRow(rowMap, data.item.key) }>
-                            <Text style={styles.backTextWhite}>Not Delete</Text>
+                        <TouchableOpacity style={[entry_details.backRightBtn, entry_details.backRightBtnRight]} onPress={ _ => this.deleteRow(rowMap, data.item.key) }>
+                            <Text style={entry_details.backTextWhite}>Not Delete</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -33,7 +33,7 @@
 
 
 {/*
-            <View style={styles.container}>
+            <View style={entry_details.container}>
 
 
                 <FlatList

@@ -7,10 +7,11 @@ target 'untitled' do
 
   # Pods for untitled
 
-  target 'untitled-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+
+
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
   target 'untitledTests' do
     inherit! :search_paths
@@ -32,10 +33,16 @@ target 'untitled' do
       'RCTSettings',
       'RCTText',
       'RCTVibration',
-      'RCTWebSocket'
+      'RCTWebSocket',
     ]
 
   pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+
+
+
+
 
 
 end

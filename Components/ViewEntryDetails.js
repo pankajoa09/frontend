@@ -6,7 +6,7 @@ import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-nati
 
 import t from 'tcomb-form-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import styles from '../styleForEntryDetails';
+import styles from '../styleSheets/EntryDetails_style';
 
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();

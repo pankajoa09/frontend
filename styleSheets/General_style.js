@@ -156,7 +156,6 @@ module.exports = StyleSheet.create({
     },
     backRightBtnLeft: {
         backgroundColor: '‎rgb(128, 0, 0)',
-
         right: 0
     },
     backRightBtnRight: {
@@ -170,7 +169,8 @@ module.exports = StyleSheet.create({
     switchContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 5
+        marginBottom: 5,
+        marginTop: 50,
     },
     switch: {
         alignItems: 'center',

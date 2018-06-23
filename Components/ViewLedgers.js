@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Blink from '../Blink';
 import EntryCard from '../EntryCard';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import styles from '../style';
+import styles from '../styleSheets/General_style';
 import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-native-elements';
 
 import { Card, ListItem, Button } from 'react-native-elements'
