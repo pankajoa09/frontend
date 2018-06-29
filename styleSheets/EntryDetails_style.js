@@ -1,6 +1,7 @@
 'use strict';
 
-import {Dimensions} from "react-native";
+import {Dimensions,PixelRatio} from "react-native";
+
 
 const React = require('react-native');
 
@@ -80,6 +81,23 @@ module.exports = StyleSheet.create({
         alignSelf: 'stretch',
         justifyContent: 'center'
     },
+    avatarSuperContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF'
+    },
+    avatarContainer: {
+        borderColor: '#9B9B9B',
+        borderWidth: 1 / PixelRatio.get(),
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    avatar: {
+        borderRadius: 10,
+        width: 200,
+        height: 200
+    }
 
 
 });

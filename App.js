@@ -50,6 +50,11 @@ const CreateEntryStack = StackNavigator({
     CreateEntry: {screen: CreateEntry}
 });
 
+const ExampleStack = StackNavigator({
+    Example: {screen: Example},
+    CreateEntry: {screen: CreateEntry}
+})
+
 
 
 
@@ -58,7 +63,7 @@ const TabNav = TabNavigator(
         Home: {screen: HomeStack},
         CreateEntry: {screen: CreateEntryStack},
         Search: {screen: Search},
-        Example: {screen: Example}
+        Example: {screen: ExampleStack}
     },
     {
         tabBarComponent: NavigationComponent,

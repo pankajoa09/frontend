@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import entry_details from '../styleSheets/EntryDetails_style';
 import general from '../styleSheets/General_style.js'
+import UploadPhoto from './UploadPhoto'
 import { Keyboard, TouchableOpacity } from 'react-native'
 
 import currentServerAddress from '../currentServerAddress'
@@ -41,6 +42,7 @@ const Ledger = t.struct({
     Currency: Curr,
     Date: t.Date,
     Comment: t.maybe(t.String),
+    PhotoName: t.maybe(t.String),
 
 });
 
@@ -78,6 +80,9 @@ const options = {
             error: 'Insert valid Comment'
         },
         Date: {
+            hidden: true
+        },
+        PhotoName:{
             hidden: true
         },
         terms: {
@@ -126,6 +131,8 @@ class CreateEntry extends Component {
             Amount: 0,
             Currency: 'THB',
             Comment: '',
+            PhotoName: this.props.navigation.getParam('PhotoName','')
+
         },
         valueBasic:{
             Command: '',
@@ -153,10 +160,11 @@ class CreateEntry extends Component {
                 Amount: value.Amount,
                 Currency: value.Currency,
                 Date: value.Date,
-                Comment: value.Comment
+                Comment: value.Comment,
+                PhotoName: value.PhotoName
             })
         }).then((response) => console.log(response));
-        this.props.navigation.navigate("ViewEntries", {paramName: value.Ledger})
+        this.props.navigation.navigate("ViewEntries", {paramName: value.Ledger});
 
 
     };
@@ -180,7 +188,7 @@ class CreateEntry extends Component {
             })
         }).then((response) => {
             console.log(response);
-            const Ledger = response.headers.map.ledger[0];
+            const Ledger = response.headers.map.Ledger[0];
             console.log(Ledger);
             this.props.navigation.navigate("ViewEntries", {paramName: Ledger})
         });
@@ -194,11 +202,15 @@ class CreateEntry extends Component {
 
 
     render() {
+
+
+
+
         return (
             <View style={entry_details.container}>
             <View style={general.controls}>
                 <View style={general.switchContainer}>
-                    { ['QuickAdd', 'Advanced'].map( type => (
+                    { ['QuickAdd', 'Advanced','Camera'].map( type => (
                         <TouchableOpacity
                             key={type}
                             style={[
@@ -246,6 +258,13 @@ class CreateEntry extends Component {
                 </TouchableHighlight>
             </View>
             </ScrollView>
+        }
+        {
+                    this.state.listType === 'Camera' &&
+                        <ScrollView scrollEnabled ={true}>
+                            <UploadPhoto/>
+                        </ScrollView>
+
         }
             </View>
         );

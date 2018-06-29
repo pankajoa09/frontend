@@ -13,12 +13,10 @@ import RNFetchBlob from 'react-native-fetch-blob'
 
 import ImagePicker from 'react-native-image-picker';
 import entry_details from "../styleSheets/EntryDetails_style";
-
-import HelperFunctions from "./HelperFunctions";
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
 
-export default class Example2 extends React.Component {
+class UploadPhoto extends React.Component {
 
 
 
@@ -34,38 +32,29 @@ export default class Example2 extends React.Component {
         this.setState({
             avatarSource: null,
             data: null,
-        })
+        }, this.handleUpload)
     }
 
 
 
     handleUpload = ()=>{
-        console.log("handle upload clicked");
+        console.log("handle upload");
         console.log(this.state);
         const url = address+':8080/mobile/uploadPhotoEntry';
         console.log(url);
-        const photoID = HelperFunctions.generateUniqueID();
-        const photoName = photoID+'.png';
-
-        console.log(photoName);
         if (this.state !== undefined) {
             RNFetchBlob.fetch('POST',url, {
                 Authorization: "Bearer access-token",
                 otherHeader: "foo",
                 "Content-Type": 'multipart/form-data',
             }, [
-                { name: photoID, filename: photoName, type: 'image/png', data: this.state.data}
+                { name: 'image', filename: 'image.png', type: 'image/png', data: this.state.data}
             ]).then((response) => {
-                console.log("SUCCESS: "+response);
-                console.log("what teh fucker");
-                console.log(photoName);
-                this.props.navigation.navigate('CreateEntry', {PhotoName: photoName});
-                console.log("what teh fucker2");
+                console.log("SUCCESS: "+response)
+
             }).catch((response) => {
                 console.log("FAIL: "+response)
-
             });
-
 
         }
         else{
@@ -103,14 +92,11 @@ export default class Example2 extends React.Component {
 
                 // You can also display the image using data:
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-                console.log(response.data);
 
                 this.setState({
                     avatarSource: source,
                     data: response.data
-                },this.handleUpload);
-
-
+                });
             }
         });
     }
@@ -119,7 +105,6 @@ export default class Example2 extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-
                 <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
                     <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
                         { this.state.avatarSource === null ? <Text>Select a Photo</Text> :
@@ -127,9 +112,9 @@ export default class Example2 extends React.Component {
                         }
                     </View>
                 </TouchableOpacity>
-                    <TouchableHighlight style={entry_details.blueButton} onPress={()=>this.props.navigation.navigate("CreateEntry",{paramName:"what the fuck"})} underlayColor='#99d9f4'>
-                        <Text style={entry_details.buttonText}>Skip</Text>
-                    </TouchableHighlight>
+                <TouchableHighlight style={entry_details.blueButton} onPress={this.handleUpload} underlayColor='#99d9f4'>
+                    <Text style={entry_details.buttonText}>Upload</Text>
+                </TouchableHighlight>
             </View>
         );
     }
@@ -156,4 +141,4 @@ const styles = StyleSheet.create({
     }
 });
 
-module.exports = Example2;
+module.exports = UploadPhoto;

@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 //import Button from '../Button';
 import Blink from '../Blink';
@@ -8,7 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import styles from '../styleSheets/EntryDetails_style';
 import { Keyboard } from 'react-native'
 import currentServerAddress from '../currentServerAddress'
-const address= currentServerAddress.address();
+import CRUD from './CRUD'
+const address = currentServerAddress.address();
 
 import {
     Platform,
@@ -17,9 +17,14 @@ import {
     Text,
     View,
     Button,
-    TouchableHighlight
-} from 'react-native';
+    TouchableHighlight,
+    Image,
+    TouchableOpacity,
 
+} from 'react-native';
+import ImagePicker from "react-native-image-picker";
+import RNFetchBlob from "react-native-fetch-blob";
+import HelperFunctions from "./HelperFunctions";
 
 
 
@@ -30,15 +35,16 @@ const Curr = t.enums({
     'USD': 'United States Dollar'
 },'Currency');
 
-const Ledger = t.struct({
+const Entry = t.struct({
     Ledger: t.String,
     AccountID: t.String,
     Amount: t.Number,
     Currency: Curr,
     Date: t.Date,
     Comment: t.maybe(t.String),
-
+    PhotoName: t.maybe(t.String),
 });
+
 
 const options = {
     fields: {
@@ -71,6 +77,9 @@ const options = {
         Date: {
             hidden: false
         },
+        PhotoName: {
+            hidden: true
+        },
         terms: {
             label: 'Agree to Terms',
         },
@@ -78,130 +87,142 @@ const options = {
     },
 };
 
+class EditEntryDetails extends Component{
 
-
-
-
-class EditEntryDetails extends Component {
-
-
-
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            title: 'Edit Entry',
-            tabBarLabel: 'Edit Entry',
-            tabBarIcon: () => <Icon size={24} name="home" color="white" />,
-
-        }
-    };
 
     constructor(props){
         super(props);
-        const originalEntryValues = this.props.navigation.state.params.paramName;
-        console.log(originalEntryValues);
-        this.state={
+        const entry = this.props.navigation.state.params.paramName; //gotta fix the naming
+
+        this.state = {
             value: {
-                Ledger: originalEntryValues.Ledger,
-                AccountID: originalEntryValues.AccountID,
-                Amount: originalEntryValues.Amount,
-                Currency: originalEntryValues.Currency,
-                Comment: originalEntryValues.Comment,
-                //Date: originalEntryValues.Date
+                Ledger: entry.Ledger,
+                AccountID: entry.AccountID,
+                Amount: entry.Amount,
+                Currency: entry.Currency,
+                Comment: entry.Comment,
+                PhotoName: entry.PhotoName
+                //Date: entry.Date //gottafix this
+            },
+            image: {
+                source: null,
+                data: null,
+            },
+            clientUsingLocalPhoto : false
+        }
+    }
+
+    componentWillMount(){
+        console.log("Edit Entry Details Mounted");
+        const photoName = this.props.navigation.state.params.paramName.PhotoName;
+        console.log(photoName);
+        if (!((photoName === null) || (photoName === ''))){
+            console.log('went here');
+            const serverImageURI = CRUD.getURIFromPhotoName(this.props.navigation.state.params.paramName.PhotoName);
+            this.setState({
+                image : {
+                    source: {uri: serverImageURI},
+                    data : null,
+                },
+                clientUsingLocalPhoto: false
+            })
+        }
+
+    }
+
+    selectPhotoTapped() {
+        const options = {
+            quality: 1.0,
+            maxWidth: 500,
+            maxHeight: 500,
+            storageOptions: {
+                skipBackup: true
             }
+        };
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled photo picker');
+            }
+            else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }
+            else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }
+            else {
+                console.log('Should be using local');
+                this.setState({
+                    image : {
+                        source : {uri: response.uri},
+                        data: response.data
+                    },
+                    clientUsingLocalPhoto: true,
+                })
+
+            }
+        });
+    }
+
+    _handleClick = ()=>{
+        console.log("handleclick");
+        const formVal = this._form.getValue();
+        if (this.state.clientUsingLocalPhoto===true){
+            console.log('using local');
+            const photoName = CRUD.uploadPhotoFromData(this.state.image.data);
+            console.log(photoName);
+            const entry = {
+                Ledger : formVal.Ledger,
+                AccountID: formVal.AccountID,
+                Amount: formVal.Amount,
+                Currency: formVal.Currency,
+                Date: formVal.Date,
+                Comment: formVal.Comment,
+                PhotoName: photoName
+            };
+            CRUD.deleteEntry(this.props.navigation.state.params.paramName.EntryID);
+            CRUD.uploadEntry(entry);
+            this.props.navigation.navigate("ViewEntries",{paramName: entry.Ledger})
+        }
+        else{
+            console.log('notusinglocal');
+            CRUD.deleteEntry(this.props.navigation.state.params.paramName.EntryID);
+            CRUD.uploadEntry(formVal);
+            this.props.navigation.navigate("ViewEntries",{paramName: formVal.Ledger})
 
         }
+
+
     }
 
 
-
-    state = {
-        value: {
-            Ledger: '',
-            AccountID: '',
-            Amount: 0,
-            Currency: 'THB',
-            Comment: '',
-            Date: ''
-        }
-    };
+    render(){
 
 
-    deleteEntry(entryID) {
-        console.log("delete Entry");
-
-        console.log(entryID);
-        fetch(address+':8080/mobile/deleteEntry',{
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                EntryID: entryID
-            })
-
-        }).then((response) => console.log(response));
-        //this._onRefresh()
-    }
-
-
-
-
-    handleSubmit = () => {
-
-        const value = this._form.getValue(); // use that ref to get the form value
-        console.log("handle edit submit");
-        this.deleteEntry(this.props.navigation.state.params.paramName.EntryID);
-        Keyboard.dismiss();
-        console.log('value: ', value);
-        fetch(address+':8080/mobile/createEntry', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                Ledger: value.Ledger,
-                AccountID: value.AccountID,
-                Amount: value.Amount,
-                Currency: value.Currency,
-                Date: value.Date,
-                Comment: value.Comment
-            })
-        }).then((response) => console.log(response));
-        this.props.navigation.navigate("ViewEntries", {paramName: value.Ledger})
-
-
-    };
-
-
-
-
-
-
-    render() {
         return (
             <ScrollView scrollEnabled={true}>
                 <View style={styles.container}>
 
-                    },
+                    <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+                        <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
+                            { this.state.image.source === null ? <Text>Select a Photo</Text> :
+                                <Image style={styles.avatar} source={this.state.image.source} />
+                            }
+                        </View>
+                    </TouchableOpacity>
                     <Form
                         ref={component => this._form = component} //wtf is this shit pls dont delete it works
-                        type={Ledger}
+                        type={Entry}
                         options={options} // pass the options via props
                         value={this.state.value}
                     />
-                    <TouchableHighlight style={styles.blueButton} onPress={this.handleSubmit} underlayColor='#99d9f4'>
+                    <TouchableHighlight style={styles.blueButton} onPress={this._handleClick} underlayColor='#99d9f4'>
                         <Text style={styles.buttonText}>Save Changes</Text>
                     </TouchableHighlight>
                 </View>
             </ScrollView>
         );
+
     }
 }
-
-
-
 
 module.exports = EditEntryDetails;

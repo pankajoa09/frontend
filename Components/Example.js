@@ -23,7 +23,7 @@ export default class Example extends React.PureComponent {
         const { label, value } = selectedSlice;
         const keys = ['google', 'facebook', 'linkedin', 'youtube', 'Twitter'];
         const values = [15, 25, 35, 45, 55];
-        const colors = ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff']
+        const colors = ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'];
         const data = keys.map((key, index) => {
             return {
                 key,

@@ -129,11 +129,10 @@ class ViewEntries extends Component {
     async fetchData() {
         try {
             const Ledger = this.props.navigation.state.params.paramName;
-            const url = address+':8080/mobile/ledgerList/'+Ledger;
+            const url = address+':8080/mobile/ledgerList/ledgerName/'+Ledger;
             console.log(url);
             let response = await fetch(url);
             let responseJson = await response.json();
-            console.log(responseJson);
             this.setState({
                 loading: false,
                 entries: responseJson,
@@ -275,6 +274,7 @@ class ViewEntries extends Component {
     render() {
 
         return (
+
             <View>
             <SwipeListView
                 refreshControl={
