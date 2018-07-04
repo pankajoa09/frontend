@@ -7,6 +7,7 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 import * as Animatable from 'react-native-animatable';
 //import RNShakeEvent from 'react-native-shake-event';
 import helperFunctions from './HelperFunctions';
+import CRUD from './CRUD';
 
 
 import currentServerAddress from '../currentServerAddress'
@@ -38,6 +39,18 @@ import {
 
 class ViewEntries extends Component {
 
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return {
+            title: params ? params.paramName : 'A Nested Details Screen',
+            headerRight: params ? params.headerRight : undefined,
+            headerLeft: params ? params.headerLeft : undefined,
+            tabBarLabel: 'Home',
+            tabBarIcon: () => <Icon size={24} name="home" color="white" />,
+
+        }
+    };
+
     constructor(props){
         super(props);
         this.state={
@@ -47,37 +60,15 @@ class ViewEntries extends Component {
         };
     }
 
-    state = {
-        entries: [],
-        loading: true,
-        refreshing:false,
-        entriesToDelete: [],
-    };
-
-
-
-
-
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            title: params ? params.paramName : 'A Nested Details Screen',
-            //headerRight:  params.nothingToUndo ? "" : <Button style={entry_details.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
-            headerRight: params ? params.headerRight : undefined,
-            tabBarLabel: 'Home',
-            tabBarIcon: () => <Icon size={24} name="home" color="white" />,
-
-        }
-    };
 
     componentDidMount(){
         console.log("view entries");
         console.log(this.props.navigation.state.params.paramName);
 
         this.props.navigation.setParams({
-            handleThis: this.refreshHandler,
             nothingToUndo: this.ifEntriesToDelete(),
             headerRight: null,
+            headerLeft: null,
         });
 
         this.props.navigation.addListener(
@@ -89,13 +80,7 @@ class ViewEntries extends Component {
         );
     }
 
-    refreshHandler = () => {
-        this.setState({
-            entriesToDelete:[],
-        });
-        this._onRefresh();
 
-    };
 
     ifEntriesToDelete = () => {
         console.log("if no entires to delete");
@@ -104,24 +89,48 @@ class ViewEntries extends Component {
         console.log(this.state.entriesToDelete.length);
         //dunno why -1 but yolo, tried indexing from 0.
         if (this.state.entriesToDelete.length > 0){
-            this.addHeaderRightButton();
+            this.addHeaderButtons();
         }
         else{
-            this.removeHeaderRightButton();
+            this.removeHeaderButtons();
         }
     };
 
-    addHeaderRightButton = () => {
+    addHeaderButtons = () => {
         console.log("add header right button");
         this.props.navigation.setParams({
-            headerRight: <Button style={styles.button} title={"Confirm"} onPress={()=>this._actuallyDeleteEntries()}/>,
+            headerRight: <Button style={styles.button} title={"Confirm"} onPress={()=>this._clickConfirm()}/>,
+            headerLeft: <Button style={styles.button} title={"Cancel"} onPress={()=>this._clickCancel()}/>,
         })
     };
 
-    removeHeaderRightButton = () => {
+    _clickCancel=() =>{
+        this.setState({entriesToDelete: []},this._onRefresh());
+    };
+
+    _clickConfirm(){
+        if (!this.state.entriesToDelete.isEmpty){
+            this.state.entriesToDelete.map(_=>CRUD.deleteEntry(_));
+            this.setState({entriesToDelete:[]},this._onRefresh());
+        }
+    }
+
+    _onRefresh() {
+        this.setState({refreshing:true});
+        this.fetchData().then(()=> {
+            this.setState({
+                refreshing: false,
+            });
+            this.ifEntriesToDelete();
+        });
+
+    }
+
+    removeHeaderButtons = () => {
         console.log("remove right header");
         this.props.navigation.setParams({
-            headerRight: undefined
+            headerRight: undefined,
+            headerLeft: undefined
         });
     };
 
@@ -145,59 +154,12 @@ class ViewEntries extends Component {
 
 
 
-    componentWillMount() {
-        //RNShakeEvent.addEventListener('shake',() => {
-//            console.log("Device Shook: Undo Delete");
-//            this.refreshHandler();
-//        })
-    }
-
-    componentWillUnmount() {
-        //this.props.navigation.removeAllListeners();
-        console.log("unmount");
-        this._actuallyDeleteEntries();
-        //RNShakeEvent.removeEventListener('shake');
-
-    }
-
-    _actuallyDeleteEntries(){
-        if (!this.state.entriesToDelete.isEmpty){
-            this.state.entriesToDelete.map(_=>this.deleteEntry(_));
-            this.setState({entriesToDelete:[]});
-        }
-    }
-
-
-    _onRefresh() {
-        this.setState({refreshing:true});
-        this.fetchData().then(()=> {
-            this.setState({
-                refreshing: false,
-            });
-            this.ifEntriesToDelete();
-        });
-
-    }
 
 
 
-    deleteEntry(entryID) {
-        console.log("delete Entry");
 
-        console.log(entryID);
-        fetch(address+':8080/mobile/deleteEntry',{
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                EntryID: entryID
-            })
 
-            }).then((response) => console.log(response));
-            //this._onRefresh()
-    }
+
 
     closeRow(rowMap, rowKey) {
         if (rowMap[rowKey]) {
@@ -231,9 +193,7 @@ class ViewEntries extends Component {
 
 
 
-    totalAmountForCurrency(ent,curr){
-        return ent.filter(x=>(x.Currency===curr)).map(_=>_.Amount).reduce((a,b)=>a+b,0)
-    }
+
 
     totalPart(entries){
 
@@ -272,9 +232,7 @@ class ViewEntries extends Component {
 
 
     render() {
-
         return (
-
             <View>
             <SwipeListView
                 refreshControl={
@@ -283,12 +241,10 @@ class ViewEntries extends Component {
                         onRefresh={this._onRefresh.bind(this)}
                     />
                 }
-
                 useFlatList
                 disableRightSwipe={true}
                 data={this.state.entries}
                 renderItem={ (data, rowMap) => (
-
                     <View>
                         <TouchableHighlight
                             onPress={ _ => this.props.navigation.navigate('ViewEntryDetails',{paramName: data.item}) }
@@ -334,14 +290,7 @@ class ViewEntries extends Component {
                 keyExtractor={() => Math.random().toString(36).substr(2, 9)}
 
             />
-
-
                 {this.totalPart(this.state.entries)}
-
-
-
-
-
 
             </View>
 

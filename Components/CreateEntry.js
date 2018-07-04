@@ -12,6 +12,7 @@ import general from '../styleSheets/General_style.js'
 import UploadPhoto from './UploadPhoto'
 import { Keyboard, TouchableOpacity } from 'react-native'
 
+import CRUD from './CRUD'
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
 
@@ -146,27 +147,9 @@ class CreateEntry extends Component {
 
     handleSubmit = () => {
         const value = this._form.getValue();// use that ref to get the form value
+        CRUD.uploadEntry(value);
         Keyboard.dismiss();
-        console.log('value: ', value);
-        fetch(address+':8080/mobile/createEntry', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                Ledger: value.Ledger,
-                AccountID: value.AccountID,
-                Amount: value.Amount,
-                Currency: value.Currency,
-                Date: value.Date,
-                Comment: value.Comment,
-                PhotoName: value.PhotoName
-            })
-        }).then((response) => console.log(response));
         this.props.navigation.navigate("ViewEntries", {paramName: value.Ledger});
-
-
     };
 
 
@@ -203,14 +186,11 @@ class CreateEntry extends Component {
 
     render() {
 
-
-
-
         return (
             <View style={entry_details.container}>
             <View style={general.controls}>
                 <View style={general.switchContainer}>
-                    { ['QuickAdd', 'Advanced','Camera'].map( type => (
+                    { ['QuickAdd', 'Advanced'].map( type => (
                         <TouchableOpacity
                             key={type}
                             style={[
