@@ -98,6 +98,7 @@ class ViewLedgers extends Component {
     componentWillUnmount(){
         AppState.removeEventListener('change',this._handleAppStateChange);
         //this.props.navigation.removeAllListeners();
+
         console.log("unmount on ledger");
         this._actuallyDeleteLedgers();
     }

@@ -42,9 +42,6 @@ class CRUD {
         return DATA;
         }
 
-
-
-
     static deleteEntry(entryID) {
         console.log("deleteEntry");
 
@@ -112,6 +109,57 @@ class CRUD {
                 PhotoName: value.PhotoName
             })
         }).then((response) => console.log(response));
+
+    }
+
+    static async getAnything(url){
+        try {
+            console.log(url);
+            let response = await fetch(url);
+            let responseJson = await response.json();
+            let something = await responseJson;
+            return something
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static getAllLedgers(){
+        const url = address+':8080/mobile/ledgerList';
+        return this.getAnything(url)
+    }
+
+
+    static getAllCurrencies(){
+        const url = address+':8080/mobile/getAllCurrencies';
+        return this.getAnything(url);
+    }
+
+    static getCurrenciesForLedger(ledger){
+        const url = address+':8080/mobile/getCurrencies/'+ledger;
+        return this.getAnything(url);
+    }
+
+    static getAllAccountIDs(){
+        const url = address+':8080/mobile/getAllAccountIDs';
+        return this.getAnything(url);
+
+    }
+
+    static getAccountIDsForLedger(ledger){
+        const url = address+':8080/mobile/getAccountIDs/'+ledger;
+        return this.getAnything(url);
+    }
+
+
+    static getAllEntries(){
+        const url = address+':8080/mobile/getAllEntries';
+        return this.getAnything(url);
+    }
+
+    static getEntriesForLedger(ledger){
+        const url = address+':8080/mobile/ledgerList/ledgerName/'+ledger;
+        return this.getAnything(url)
 
     }
 

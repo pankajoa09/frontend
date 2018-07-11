@@ -10,15 +10,16 @@ import Home from './Components/Home';
 import ViewLedgers from './Components/ViewLedgers';
 import CreateEntry from './Components/CreateEntry';
 import EditEntryDetails from './Components/EditEntryDetails';
-//import DeleteEntry from './Components/DeleteEntry';
 import Search from './Components/Search';
 import ViewEntries from './Components/ViewEntries';
 import ViewEntryDetails from './Components/ViewEntryDetails';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
-import Example from './Components/Example2';
-//import Example2 from './Components/Example';
-//import Example2 from './Components/PieChartMultipleView';
+import PhotoUploadScreen from './Components/PhotoUploadScreen';
+import Example from './Components/CreateEntryWithAutoAttempt';
+
+
+
 
 
 
@@ -46,24 +47,36 @@ const HomeStack = StackNavigator({
     }
 );
 
+
+/*
 const CreateEntryStack = StackNavigator({
     CreateEntry: {screen: CreateEntry}
 });
+*/
 
-const ExampleStack = StackNavigator({
-    Example: {screen: Example},
+const PhotoCreateEntryStack = StackNavigator({
+    PhotoUploadScreen: {screen: PhotoUploadScreen},
     CreateEntry: {screen: CreateEntry}
-})
+});
 
+const SearchStack = StackNavigator({
+    SearchScreen: {screen: Search}
+});
 
+/*
+const ExampleStack = StackNavigator({
+    ExampleScreen: {screen: Example}
+});
+*/
 
 
 const TabNav = TabNavigator(
     {
         Home: {screen: HomeStack},
-        CreateEntry: {screen: CreateEntryStack},
+        //CreateEntry: {screen: CreateEntryStack},
+        PhotoCreateEntry: {screen: PhotoCreateEntryStack},
         Search: {screen: Search},
-        Example: {screen: ExampleStack}
+        //Example: {screen: ExampleStack}
     },
     {
         tabBarComponent: NavigationComponent,
@@ -80,7 +93,7 @@ const TabNav = TabNavigator(
                         label: 'Home',
 
                     },
-                    CreateEntry: {
+                    PhotoCreateEntry: {
                         barBackgroundColor: 'dimgrey',
                         label: 'Create Entry'
                     },

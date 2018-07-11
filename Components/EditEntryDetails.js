@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 //import Button from '../Button';
 import Blink from '../Blink';
 import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
@@ -23,8 +24,8 @@ import {
 
 } from 'react-native';
 import ImagePicker from "react-native-image-picker";
-import RNFetchBlob from "react-native-fetch-blob";
-import HelperFunctions from "./HelperFunctions";
+
+
 
 
 
@@ -139,6 +140,7 @@ class EditEntryDetails extends Component{
                 skipBackup: true
             }
         };
+
         ImagePicker.showImagePicker(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled photo picker');

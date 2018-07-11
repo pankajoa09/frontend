@@ -33,6 +33,8 @@ module.exports = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         backgroundColor: '#ffffff',
+
+        zIndex:10,
     },
     welcome: {
         fontSize: 16,

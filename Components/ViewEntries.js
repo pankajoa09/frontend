@@ -65,6 +65,7 @@ class ViewEntries extends Component {
         console.log("view entries");
         console.log(this.props.navigation.state.params.paramName);
 
+        console.log(CRUD.getAccountIDsForLedger(this.props.navigation.state.params.paramName));
         this.props.navigation.setParams({
             nothingToUndo: this.ifEntriesToDelete(),
             headerRight: null,
@@ -136,27 +137,12 @@ class ViewEntries extends Component {
 
 
     async fetchData() {
-        try {
-            const Ledger = this.props.navigation.state.params.paramName;
-            const url = address+':8080/mobile/ledgerList/ledgerName/'+Ledger;
-            console.log(url);
-            let response = await fetch(url);
-            let responseJson = await response.json();
-            this.setState({
-                loading: false,
-                entries: responseJson,
-            });
-
-        } catch (error) {
-            console.error(error);
-        }
+        const entries = await CRUD.getEntriesForLedger(this.props.navigation.state.params.paramName);
+        this.setState({
+            loading: false,
+            entries: entries,
+        });
     }
-
-
-
-
-
-
 
 
 
@@ -196,8 +182,6 @@ class ViewEntries extends Component {
 
 
     totalPart(entries){
-
-
         const currTuple = helperFunctions.getUniqueAndTally(entries,'Currency');
         const sumZero = currTuple.map(_=>_.value).reduce((a,b)=>a+b,0)===0;
         const red = 'rgb(255, 204, 204)';

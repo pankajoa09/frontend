@@ -1,3 +1,5 @@
+import CRUD from './CRUD';
+
 class HelperFunctions {
 
     static getUniqueAndTally(entries, parameter){

@@ -1,159 +1,153 @@
-import React from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    PixelRatio,
-    TouchableOpacity,
-    Image,
-    TouchableHighlight
-} from 'react-native';
-import RNFetchBlob from 'react-native-fetch-blob'
 
-import ImagePicker from 'react-native-image-picker';
-import entry_details from "../styleSheets/EntryDetails_style";
+import React, { Component } from 'react';
+//import Button from '../Button';
+import Blink from '../Blink';
+import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
+import t from 'tcomb-form-native';
 
-import HelperFunctions from "./HelperFunctions";
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
+
+
+
+
+
+import { Keyboard, TouchableOpacity } from 'react-native'
+
+import CRUD from './CRUD'
+import AutoInput from './AutoInput'
+
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
 
-export default class Example2 extends React.Component {
+import {
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+    Button,
+    TouchableHighlight
+} from 'react-native';
 
 
+const Form = t.form.Form;
+
+
+
+const Name = t.struct({
+    name: t.String,
+});
+
+
+const options = {
+    fields: {
+        name: {
+            factory: AutoInput,
+            config: {
+                elements: ['bob','charles','babbage','manson'].map(x=>({name:x})),
+                propForQuery: 'name',
+            },
+            label: 'Name',
+        },
+    },
+};
+
+class Example2 extends Component {
+
+    static navigationOptions = ({navigation}) => {
+        const {params = {}} = navigation.state;
+        return {
+            title: 'Create Namey',
+            tabBarLabel: 'Create Entry',
+            tabBarIcon: () => <Icon size={24} name="add-circle-outline" color="white"/>,
+
+        }
+    };
 
     constructor(props) {
         super(props);
         this.state = {
-            avatarSource: null,
-            data: null,
-        }
-    };
-
-    componentDidMount(){
-        this.setState({
-            avatarSource: null,
-            data: null,
-        })
+            name: ''
+        };
     }
 
-
-
-    handleUpload = ()=>{
-        console.log("handle upload clicked");
-        console.log(this.state);
-        const url = address+':8080/mobile/uploadPhotoEntry';
-        console.log(url);
-        const photoID = HelperFunctions.generateUniqueID();
-        const photoName = photoID+'.png';
-
-        console.log(photoName);
-        if (this.state !== undefined) {
-            RNFetchBlob.fetch('POST',url, {
-                Authorization: "Bearer access-token",
-                otherHeader: "foo",
-                "Content-Type": 'multipart/form-data',
-            }, [
-                { name: photoID, filename: photoName, type: 'image/png', data: this.state.data}
-            ]).then((response) => {
-                console.log("SUCCESS: "+response);
-                console.log("what teh fucker");
-                console.log(photoName);
-                this.props.navigation.navigate('CreateEntry', {PhotoName: photoName});
-                console.log("what teh fucker2");
-            }).catch((response) => {
-                console.log("FAIL: "+response)
-
-            });
-
-
-        }
-        else{
-            console.log("infrared you know what i mean?")
-        }
-
-
-    };
-
-    selectPhotoTapped() {
-        const options = {
-            quality: 1.0,
-            maxWidth: 500,
-            maxHeight: 500,
-            storageOptions: {
-                skipBackup: true
-            }
+        handleSubmit = () => {
+            const value = this._form.getValue();// use that ref to get the form value
+            console.log(value);
         };
 
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled photo picker');
-            }
-            else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            }
-            else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            }
-            else {
-
-                let source = { uri: response.uri };
-
-                // You can also display the image using data:
-                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-                console.log(response.data);
-
-                this.setState({
-                    avatarSource: source,
-                    data: response.data
-                },this.handleUpload);
-
-
-            }
-        });
-    }
-
-
-    render() {
-        return (
-            <View style={styles.container}>
-
-                <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-                    <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
-                        { this.state.avatarSource === null ? <Text>Select a Photo</Text> :
-                            <Image style={styles.avatar} source={this.state.avatarSource} />
-                        }
+        render()
+        {
+            return (
+                <ScrollView scrollEnabled={true} keyboardShouldPersistTaps='always' style={styles.descriptionContainer} contentContainerStyle={{backgroundColor:'white'}}>
+                    <View style={styles.descriptionContainer}>
+                        <View style={{zIndex:2, backgroundColor:'#cccccc'}}>
+                        <Form
+                            ref={component => this._form = component} //wtf is this shit pls dont delete it works
+                            type={Name}
+                            options={options} // pass the options via props
+                            value={this.state.value}
+                            style={{zIndex:1}}
+                        />
+                        </View>
+                        <View style={{backgroundColor:"#cccccc", zIndex:1}}>
+                        <TouchableOpacity style={styles.button} onPress={()=>console.log("whfueck")}><Text style={{fontSize:14,zIndex:1,}}>ehhh</Text></TouchableOpacity>
+                        </View>
                     </View>
-                </TouchableOpacity>
-                    <TouchableHighlight style={entry_details.blueButton} onPress={()=>this.props.navigation.navigate("CreateEntry",{paramName:"what the fuck"})} underlayColor='#99d9f4'>
-                        <Text style={entry_details.buttonText}>Skip</Text>
-                    </TouchableHighlight>
-            </View>
-        );
-    }
+                </ScrollView>
+            )
+        }
 
-}
+    }
 
 const styles = StyleSheet.create({
+    button:{
+        shadowColor:"#cccccc",
+        position:'absolute',
+        marginTop: 0
+    },
     container: {
+        backgroundColor: '#F5FCFF',
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF'
+        paddingTop: 25
     },
-    avatarContainer: {
-        borderColor: '#9B9B9B',
-        borderWidth: 1 / PixelRatio.get(),
-        justifyContent: 'center',
-        alignItems: 'center'
+    autocompleteContainer: {
+        marginLeft: 10,
+        marginRight: 10,
+        //zIndex:10,
     },
-    avatar: {
-        borderRadius: 10,
-        width: 200,
-        height: 200
+    itemText: {
+        fontSize: 15,
+        margin: 2
+    },
+    descriptionContainer: {
+        // `backgroundColor` needs to be set otherwise the
+        // autocomplete input will disappear on text input.
+        backgroundColor: '#F5FCFF',
+        marginTop: 8,
+        //zIndex:2,
+    },
+    infoText: {
+        textAlign: 'center'
+    },
+    titleText: {
+        fontSize: 18,
+        fontWeight: '500',
+        marginBottom: 10,
+        marginTop: 10,
+        textAlign: 'center'
+    },
+    directorText: {
+        color: 'grey',
+        fontSize: 12,
+        marginBottom: 10,
+        textAlign: 'center'
+    },
+    openingText: {
+        textAlign: 'center'
     }
 });
+
 
 module.exports = Example2;

@@ -7,9 +7,10 @@ import t from 'tcomb-form-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+
 import entry_details from '../styleSheets/EntryDetails_style';
 import general from '../styleSheets/General_style.js'
-import UploadPhoto from './UploadPhoto'
+
 import { Keyboard, TouchableOpacity } from 'react-native'
 
 import CRUD from './CRUD'
@@ -27,14 +28,12 @@ import {
 } from 'react-native';
 
 
-
-
 const Form = t.form.Form;
 
 const Curr = t.enums({
     'THB': 'Thai Baht',
     'USD': 'United States Dollar'
-},'Currency');
+},'Currency'); //gotta fix
 
 const Ledger = t.struct({
     Ledger: t.String,
@@ -47,10 +46,6 @@ const Ledger = t.struct({
 
 });
 
-const Command = t.struct({
-    Command: t.String,
-    Date: t.Date
-});
 
 const options = {
     fields: {
@@ -59,11 +54,11 @@ const options = {
             error: 'Insert valid Ledger Name'
         },
         AccountID: {
-            label: 'Account Path',
+            label: 'To/From:',
             error: 'Insert valid Account Path'
         },
         Amount: {
-            label: 'Amount',
+            label: 'How much?',
             error: 'Insert valid Number'
         },
         Currency: {
@@ -93,57 +88,32 @@ const options = {
     },
 };
 
-const optionsBasic = {
-    fields: {
-        Date: {
-            hidden: true
-        },
-    },
-};
-
-
-
-
-
 class CreateEntry extends Component {
-
-
 
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
             title: 'Create Entry',
-            //headerRight:  params.nothingToUndo ? "" : <Button style={entry_details.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
-            headerRight: params ? params.headerRight : undefined,
             tabBarLabel: 'Create Entry',
             tabBarIcon: () => <Icon size={24} name="add-circle-outline" color="white" />,
 
         }
     };
 
+    constructor(props){
+        super(props);
+        this.state = {
+            value: {
+                Ledger: '',
+                AccountID: '',
+                Amount: 0,
+                Currency: 'THB',
+                Comment: '',
+                PhotoName: this.props.navigation.getParam('PhotoName','')
 
-
-
-
-    state = {
-        value: {
-            Ledger: '',
-            AccountID: '',
-            Amount: 0,
-            Currency: 'THB',
-            Comment: '',
-            PhotoName: this.props.navigation.getParam('PhotoName','')
-
-        },
-        valueBasic:{
-            Command: '',
-        },
-        listType: 'Advanced'
-    };
-
-
-
-
+            },
+        };
+    }
 
     handleSubmit = () => {
         const value = this._form.getValue();// use that ref to get the form value
@@ -152,80 +122,9 @@ class CreateEntry extends Component {
         this.props.navigation.navigate("ViewEntries", {paramName: value.Ledger});
     };
 
-
-
-    handleSubmitBasic = () => {
-        const valueBasic = this._form.getValue(); // use that ref to get the form value
-        console.log("COMMAND ENTRY");
-        Keyboard.dismiss();
-        console.log('valueBasic: ', valueBasic);
-        fetch(address+':8080/mobile/handleCommand', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                Command: valueBasic.Command,
-                Date: valueBasic.Date
-            })
-        }).then((response) => {
-            console.log(response);
-            const Ledger = response.headers.map.Ledger[0];
-            console.log(Ledger);
-            this.props.navigation.navigate("ViewEntries", {paramName: Ledger})
-        });
-
-
-    };
-
-
-
-
-
-
-    render() {
-
-        return (
-            <View style={entry_details.container}>
-            <View style={general.controls}>
-                <View style={general.switchContainer}>
-                    { ['QuickAdd', 'Advanced'].map( type => (
-                        <TouchableOpacity
-                            key={type}
-                            style={[
-                                entry_details.switch,
-                                {backgroundColor: this.state.listType === type ? '#99d9f4' : 'white'}
-                            ]}
-                            onPress={ _ => this.setState({listType: type}) }
-                        >
-                            <Text style={{color:'dimgrey',fontSize:15}}>{type}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </View>
-
-        {
-            this.state.listType === 'QuickAdd' &&
-            <ScrollView scrollEnabled={true}>
-                <View style={entry_details.container}>
-
-                    <Form
-                        ref={component => this._form = component}
-                        type={Command}
-                        options={options}
-                        value={this.state.valueBasic}
-                    />
-                    <TouchableHighlight style={entry_details.blueButton} onPress={this.handleSubmitBasic} underlayColor='#99d9f4'>
-                        <Text style={entry_details.buttonText}>Create Entry</Text>
-                    </TouchableHighlight>
-                </View>
-            </ScrollView>
-        }
-
-        {
-            this.state.listType === 'Advanced' &&
-            <ScrollView scrollEnabled={true}>
+    render(){
+        return(
+        <ScrollView scrollEnabled={true}>
             <View style={entry_details.container}>
                 <Form
                     ref={component => this._form = component} //wtf is this shit pls dont delete it works
@@ -237,21 +136,10 @@ class CreateEntry extends Component {
                     <Text style={entry_details.buttonText}>Save</Text>
                 </TouchableHighlight>
             </View>
-            </ScrollView>
-        }
-        {
-                    this.state.listType === 'Camera' &&
-                        <ScrollView scrollEnabled ={true}>
-                            <UploadPhoto/>
-                        </ScrollView>
-
-        }
-            </View>
-        );
+        </ScrollView>
+        )
     }
+
 }
-
-
-
 
 module.exports = CreateEntry;

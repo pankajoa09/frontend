@@ -35,6 +35,7 @@ import {
 } from 'react-native';
 
 import PieChartMultipleView from './PieChartMultipleView';
+import CRUD from "./CRUD";
 
 
 
@@ -56,19 +57,12 @@ class Search extends Component {
             loading: true,
             refreshing: false,
             results: [],
-
-
+            listType: 'Ledger'
         };
         this._handleResults = this._handleResults.bind(this);
     }
 
-    state = {
-        entries:[],
-        loading: true,
-        refreshing:false,
-        entriesToDelete:[],
-        listType: 'Ledger'
-    };
+
 
 
 
@@ -81,21 +75,11 @@ class Search extends Component {
 
 
     async fetchData() {
-        try {
-
-            const url = address+':8080/mobile/getAllLedgers';
-            console.log(url);
-            let response = await fetch(url);
-            let responseJson = await response.json();
-            console.log(responseJson);
-            this.setState({
-                loading: false,
-                entries: responseJson,
-            });
-
-        } catch (error) {
-            console.error(error);
-        }
+        const entries = await CRUD.getAllEntries();
+        this.setState({
+            loading: false,
+            entries: entries,
+        });
     }
 
     /////////////////////////////////////////////////
@@ -118,9 +102,7 @@ class Search extends Component {
     componentDidMount(){
 
         console.log("view entries");
-        this.setState({
-           listType: 'Ledger'
-        });
+
 
         /*
         // This is for deleting entries within search, might not implement
@@ -161,6 +143,8 @@ class Search extends Component {
     }
 
     listPart(entries){
+        console.log(this.state.results);
+        console.log(entries);
         return(
         <SwipeListView
             useFlatList
@@ -255,10 +239,7 @@ class Search extends Component {
                     <TouchableOpacity onPress={() => this.searchBar.show()}>
                         <View style={{ backgroundColor: 'transparent', height: 50, marginTop: -110 }}/>
                     </TouchableOpacity>
-                    {this.pieChartPart(this.state.results)}
-
-
-
+                    {this.listPart(this.state.results)}
 
                 </View>
 
@@ -275,6 +256,7 @@ class Search extends Component {
                     backButton={undefined}
                     allDataOnEmptySearch={true}
                 />
+
 
             </View>
 
