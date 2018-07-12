@@ -110,16 +110,17 @@ class ViewEntryDetails extends Component {
 
                 <Text style={entry_details.label}>Amount</Text>
                 <Divider style={{ backgroundColor: 'lightgrey', }} />
-                <Text style={entry_details.data}>{new Intl.NumberFormat('en-GB', {
-                    style: 'currency',
-                    currency: entry.Currency.toString()
-                }).format(Number(entry.Amount))}</Text>
+
                 <Text style={entry_details.data}>{HelperFunctions.displayCurrency(entry.Amount,entry.Currency)}</Text>
+
+                <Text style={entry_details.label}>Date</Text>
+                <Divider style={{ backgroundColor: 'lightgrey', }} />
+                <Text style={entry_details.data}>{new Date(datee).toLocaleTimeString()}</Text>
 
 
                 <Text style={entry_details.label}>Date</Text>
                 <Divider style={{ backgroundColor: 'lightgrey', }} />
-                <Text style={entry_details.data}>{new Intl.DateTimeFormat('en-US').format(datee)}</Text>
+                <Text style={entry_details.data}>{new Date(datee).toDateString()}</Text>
 
                 <Text style={entry_details.label}>Comment</Text>
 

@@ -19,6 +19,7 @@ import PhotoUploadScreen from './Components/PhotoUploadScreen';
 import CreateEntry from './Components/CreateEntryWithAutoAttempt';
 import SearchBar from 'react-native-searchbar';
 import {View} from 'react-native';
+import HelperFunctions from './Components/HelperFunctions'
 
 
 
@@ -77,7 +78,7 @@ const TabNav = TabNavigator(
         Home: {screen: HomeStack},
         //CreateEntry: {screen: CreateEntryStack},
         PhotoCreateEntry: {screen: PhotoCreateEntryStack},
-        Search: {screen: Search},
+        //Search: {screen: Search},
         //Example: {screen: ExampleStack}
     },
     {

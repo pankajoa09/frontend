@@ -10,7 +10,8 @@ import helperFunctions from './HelperFunctions';
 import CRUD from './CRUD';
 import SearchBar from 'react-native-searchbar';
 import PieChartMultipleView from './PieChartMultipleView';
-import HelperFunctions from ' ./HelperFunctions'
+import HelperFunctions from './HelperFunctions'
+
 
 
 import currentServerAddress from '../currentServerAddress'
@@ -217,6 +218,41 @@ class ViewEntries extends Component {
         const blue = 'rgb(200, 221, 247)';
         const chosenColor =(sumZero ? blue : red); //if tallied blue else red
         const comment = (sumZero ? "" : "TO BALANCE");
+        if (sumZero !== true) {
+            return (
+                <View style={{backgroundColor: chosenColor, height: currTuple.length * 30}}>
+                    <View style={{flex: 1}}>
+                        <View style={{flexDirection: 'row', flex: 1}}>
+                            <View style={{flex: 1}}>
+                                <FlatList
+                                    data={currTuple}
+                                    renderItem={({item}) =>
+                                        <Text style={styles.bigtitle}>
+                                            {HelperFunctions.displayCurrency(item.value, item.key)}
+                                        </Text>
+                                    }
+                                />
+                            </View>
+                            <View style={{flex: 1}}>
+                                <Text style={styles.cornertitle}> {comment} </Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            )
+
+        }
+    }
+
+    summaryPart(entries){
+        const currTuple = helperFunctions.getUniqueAndTally(entries,'Currency');
+        //const accTuple = helperFunctions.getUniqueAndTally(entries, "AccountName");
+        const sumZero = true;
+        //const red = 'rgb(255, 204, 204)';
+        const grey = 'rgb(220,220,220)';
+        const red = 'rgb(200, 221, 247)';
+        const chosenColor =(sumZero ? grey : red); //if tallied blue else red
+        const comment = (sumZero ? "" : "TOTAL");
         return(
             <View style={{backgroundColor:chosenColor,height:currTuple.length*30}}>
                 <View style={{flex:1}}>
@@ -273,11 +309,7 @@ class ViewEntries extends Component {
                                         <Text style={styles.cornertitle}> {new Date(data.item.Date).toLocaleTimeString()} ></Text>
                                     </View>
                                 </View>
-                                <Text style={styles.subtitle}>{new Intl.NumberFormat('en-GB', {
-                                    style: 'currency',
-                                    currency: data.item.Currency.toString()
-                                }).format(Number(data.item.Amount))}
-                                </Text>
+                                <Text style={styles.subtitle}> {HelperFunctions.displayCurrency(data.item.Amount,data.item.Currency)}</Text>
                             </View>
                         </TouchableHighlight>
                         <Divider style={{ backgroundColor: 'lightgrey', }} />
@@ -315,6 +347,7 @@ class ViewEntries extends Component {
                     allDataOnEmptySearch={true}
                 />
                 {this.totalPart(this.state.entries)}
+                {this.summaryPart(this.state.results)}
                 {this.pieChartPart(this.state.entries)}
 
 

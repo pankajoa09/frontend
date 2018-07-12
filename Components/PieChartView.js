@@ -42,7 +42,8 @@ class PieChartView extends React.PureComponent {
         //const colors = ['#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'];
 
         const total = saniDict.map(_=>_.value).reduce((a,b)=>a+b,0);
-        const colors = ['#600080', '#9900cc', '#c61aff'];
+        //const colors = ['#600080', '#9900cc', '#c61aff'];
+        const colors = ['#008000','#00FFFF','#008080','#0000FF','#600080', '#9900cc', '#c61aff', '#d966ff', '#ecb3ff'];
         const keys = saniDict.map(x=>x.key);
         const values = saniDict.map(x=>x.value);
         const percentages = saniDict.map(x=>(x.value/total));
@@ -81,7 +82,7 @@ class PieChartView extends React.PureComponent {
                         left: deviceWidth / 2 - labelWidth / 2,
                         textAlign: 'center'
                     }}>
-                    {`${label} \n ${value}`}
+                    {`${label} \n ${new Intl.NumberFormat('en-GB').format(value)}`}
                 </Text>
             </View>
         )

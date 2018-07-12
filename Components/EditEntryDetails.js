@@ -29,6 +29,7 @@ import ImagePicker from "react-native-image-picker";
 
 
 
+
 const Form = t.form.Form;
 
 const Curr = t.enums({
@@ -40,7 +41,7 @@ const Entry = t.struct({
     Ledger: t.String,
     AccountID: t.String,
     Amount: t.Number,
-    Currency: Curr,
+    Currency: t.String,
     Date: t.Date,
     Comment: t.maybe(t.String),
     PhotoName: t.maybe(t.String),
@@ -50,8 +51,7 @@ const Entry = t.struct({
 const options = {
     fields: {
         Ledger: {
-            label: 'Ledger',
-            error: 'Insert valid Ledger Name'
+            hidden: true,
         },
         AccountID: {
             label: 'Account Path',
@@ -63,11 +63,6 @@ const options = {
         },
         Currency: {
             label: 'Currency',
-            options: [
-                {value: 'THB', text: 'THB'},
-                {value: 'USD', text: 'USD'},
-                {value: 'HKD', text: 'HKD'},
-            ],
             error: 'Insert valid Currency'
 
         },
@@ -76,7 +71,7 @@ const options = {
             error: 'Insert valid Comment'
         },
         Date: {
-            hidden: false
+            //hidden: false
         },
         PhotoName: {
             hidden: true
@@ -94,7 +89,8 @@ class EditEntryDetails extends Component{
     constructor(props){
         super(props);
         const entry = this.props.navigation.state.params.paramName; //gotta fix the naming
-
+        const date = String(entry.Date);
+        let string = 'Thu Jun 29 2018 15:12:27 GMT-0400';
         this.state = {
             value: {
                 Ledger: entry.Ledger,
@@ -102,8 +98,8 @@ class EditEntryDetails extends Component{
                 Amount: entry.Amount,
                 Currency: entry.Currency,
                 Comment: entry.Comment,
-                PhotoName: entry.PhotoName
-                //Date: entry.Date //gottafix this
+                PhotoName: entry.PhotoName,
+                Date: new Date(date),
             },
             image: {
                 source: null,
@@ -111,7 +107,7 @@ class EditEntryDetails extends Component{
             },
             clientUsingLocalPhoto : false
         }
-    }
+    };
 
     componentWillMount(){
         console.log("Edit Entry Details Mounted");
@@ -165,13 +161,29 @@ class EditEntryDetails extends Component{
         });
     }
 
+
     _handleClick = ()=>{
         console.log("handleclick");
+        console.log("handleclick");
+        console.log("handleclick");
+        console.log("handleclick");
+        console.log("handleclick");
+        console.log("handleclick");
+
         const formVal = this._form.getValue();
+        console.log(formVal.Date);
+        const date = this.props.navigation.state.params.paramName.Date;
+        console.log(date);
+
+        const dateIsChanged = new Date(formVal.Date).toLocaleDateString() === new Date(date).toLocaleDateString();
+        console.log(dateIsChanged);
+
+
         if (this.state.clientUsingLocalPhoto===true){
             console.log('using local');
             const photoName = CRUD.uploadPhotoFromData(this.state.image.data);
-            console.log(photoName);
+            //console.log(photoName);
+
             const entry = {
                 Ledger : formVal.Ledger,
                 AccountID: formVal.AccountID,
@@ -194,7 +206,7 @@ class EditEntryDetails extends Component{
         }
 
 
-    }
+    };
 
 
     render(){
