@@ -10,6 +10,7 @@ import { FormLabel, FormInput, FormValidationMessage, Divider } from 'react-nati
 import { SwipeListView } from 'react-native-swipe-list-view'
 import currentServerAddress from '../currentServerAddress'
 import helperFunctions from './HelperFunctions'
+
 const address= currentServerAddress.address();
 
 
@@ -48,6 +49,23 @@ import CRUD from "./CRUD";
 
 
 class Search extends Component {
+
+
+
+
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return {
+            title: params ? params.paramName : 'A Nested Details Screen',
+            headerRight: params ? params.headerRight : undefined,
+            headerLeft: params ? params.headerLeft : undefined,
+            tabBarLabel: 'Search',
+            tabBarIcon: () => <Icon size={24} name="search" color="white" />,
+
+        }
+    };
+
+
 
     constructor(props) {
         super(props);
@@ -88,16 +106,7 @@ class Search extends Component {
     /////////////////////////////////////////////////
     //All this is lifted straight from ViewEntries
 
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            title: params ? params.paramName : 'A Nested Details Screen',
-            //headerRight:  params.nothingToUndo ? "" : <Button style={entry_details.button} title={"Undo"} onPress={()=>params.handleThis()}/>,
-            headerRight: params ? params.headerRight : undefined,
-            tabBarLabel: 'Search',
-            tabBarIcon: () => <Icon size={24} name="search" color="white" />,
-        }
-    };
+
 
     componentDidMount(){
 
@@ -122,6 +131,7 @@ class Search extends Component {
         );
 
         this.searchBar._clearInput();
+
     }
 
 
@@ -235,6 +245,7 @@ class Search extends Component {
 
         return (
             <View>
+
                 <View style={{ marginTop: 110 }}>
                     <TouchableOpacity onPress={() => this.searchBar.show()}>
                         <View style={{ backgroundColor: 'transparent', height: 50, marginTop: -110 }}/>
@@ -255,7 +266,10 @@ class Search extends Component {
                     autoCorrect={false}
                     backButton={undefined}
                     allDataOnEmptySearch={true}
+
                 />
+
+
 
 
             </View>

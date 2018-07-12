@@ -137,6 +137,7 @@ module.exports = StyleSheet.create({
         borderBottomWidth: 1,
         justifyContent: 'space-between',
         height: 50,
+        zIndex:100
     },
     rowBack: {
         alignItems: 'center',

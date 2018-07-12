@@ -1,3 +1,8 @@
+import React from 'react';
+import {View, Text, TouchableOpacity, InteractionManager, TouchableHighlight, Button, AppState, EventEmitterListener} from 'react-native';
+//import Overlay from 'react-native-overlay';
+import t from 'tcomb-form-native';
+import Autocomplete from 'react-native-autocomplete-input';
 import CRUD from './CRUD';
 
 class HelperFunctions {
@@ -45,6 +50,20 @@ class HelperFunctions {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 
+/*
+    static displayCurrency(amount,currency){
+
+        try{
+            return new Intl.NumberFormat('en-GB', {
+                style: 'currency',
+                currency: currency,
+            }).format(amount)
+        }
+        catch(err){
+            return currency+amount
+        }
+    }
+    */
 
 }
 

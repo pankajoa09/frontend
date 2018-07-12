@@ -69,7 +69,7 @@ class PieChartView extends React.PureComponent {
                 <PieChart
                     style={{ height: 200 }}
                     outerRadius={'80%'}
-                    innerRadius={'45%'}
+                    innerRadius={'30%'}
                     data={data}
                 />
                 <Text
@@ -77,7 +77,7 @@ class PieChartView extends React.PureComponent {
                         this.setState({ labelWidth: width });
                     }}
                     style={{
-                        position: 'absolute',
+                        position: 'relative',
                         left: deviceWidth / 2 - labelWidth / 2,
                         textAlign: 'center'
                     }}>

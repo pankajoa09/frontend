@@ -15,6 +15,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import PieChartView from './PieChartView';
+import LineGraphExample from './LineGraphExample'
 
 
 class PieChartMultipleView extends Component{
@@ -32,7 +33,8 @@ class PieChartMultipleView extends Component{
 
     render() {
         const {
-            entries
+            entries,
+            options
         }=this.props;
 
 
@@ -40,7 +42,7 @@ class PieChartMultipleView extends Component{
             <View style={pie_chart.container}>
                 <View style={pie_chart.controls}>
                     <View style={pie_chart.switchContainer}>
-                        { ['Ledger', 'AccountID', 'Comment'].map( type => (
+                        { options.map( type => (
                             <TouchableOpacity
                                 key={type}
                                 style={[
@@ -79,6 +81,10 @@ class PieChartMultipleView extends Component{
                     />
 
 
+                }
+                {
+                    this.state.listType === 'Date' &&
+                        <LineGraphExample entries={entries}/>
                 }
             </View>
         );

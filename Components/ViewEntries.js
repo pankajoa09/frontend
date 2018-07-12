@@ -8,6 +8,9 @@ import * as Animatable from 'react-native-animatable';
 //import RNShakeEvent from 'react-native-shake-event';
 import helperFunctions from './HelperFunctions';
 import CRUD from './CRUD';
+import SearchBar from 'react-native-searchbar';
+import PieChartMultipleView from './PieChartMultipleView';
+import HelperFunctions from ' ./HelperFunctions'
 
 
 import currentServerAddress from '../currentServerAddress'
@@ -30,7 +33,8 @@ import {
     TouchableOpacity, AppState, Dimensions,
     Animated,
     LayoutAnimation,
-    RefreshControl
+    RefreshControl,
+    ScrollView
 } from 'react-native';
 
 
@@ -51,15 +55,24 @@ class ViewEntries extends Component {
         }
     };
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             entries:[],
-            refreshing:false,
             entriesToDelete:[],
+            loading: true,
+            refreshing: false,
+            results: [],
+            listType: 'Ledger'
         };
+        this._handleResults = this._handleResults.bind(this);
+
     }
 
+    _handleResults(results) {
+        this.setState({ results });
+
+    }
 
     componentDidMount(){
         console.log("view entries");
@@ -79,6 +92,8 @@ class ViewEntries extends Component {
                 this._onRefresh();
             }
         );
+        this.searchBar._clearInput();
+
     }
 
 
@@ -119,8 +134,11 @@ class ViewEntries extends Component {
     _onRefresh() {
         this.setState({refreshing:true});
         this.fetchData().then(()=> {
+            var ent = this.state.entries;
             this.setState({
                 refreshing: false,
+                entries: ent,
+                results: ent
             });
             this.ifEntriesToDelete();
         });
@@ -153,17 +171,28 @@ class ViewEntries extends Component {
         }
     }
 
+    pieChartPart(entries){
+        return(<PieChartMultipleView entries = {this.state.results} options={['AccountID','Comment','Date']}/>)
+    }
+
 
 
     _handleDeleteRow(rowMap, rowKey) {
         console.log(rowKey);
         this.closeRow(rowMap,rowKey);
         const newData = [...this.state.entries];
+        const newDataResults = [...this.state.entries];
+
         const prevIndex = this.state.entries.findIndex(item => item.EntryID === rowKey);
+        const prevIndexResults = this.state.results.findIndex(item=> item.EntryID === rowKey);
         this.setState({entriesToDelete: this.state.entriesToDelete.concat(rowKey)},
             () => {
                 newData.splice(prevIndex,1);
-                this.setState({entries:newData});
+                newDataResults.splice(prevIndexResults,1);
+                this.setState({
+                    entries:newData,
+                    results:newDataResults,
+                });
                 this.ifEntriesToDelete();
             });
 
@@ -196,11 +225,10 @@ class ViewEntries extends Component {
                             <FlatList
                                 data={currTuple}
                                 renderItem={({item}) =>
-                                    <Text style={styles.bigtitle}>{new Intl.NumberFormat('en-GB', {
-                                    style: 'currency',
-                                    currency: item.key,
-                                }).format(item.value)}
-                                </Text>}
+                                    <Text style={styles.bigtitle}>
+                                        {HelperFunctions.displayCurrency(item.value,item.key)}
+                                    </Text>
+                                }
                             />
                         </View>
                         <View style={{flex:1}}>
@@ -217,7 +245,7 @@ class ViewEntries extends Component {
 
     render() {
         return (
-            <View>
+            <ScrollView scrollEnabled={true}>
             <SwipeListView
                 refreshControl={
                     <RefreshControl
@@ -227,7 +255,8 @@ class ViewEntries extends Component {
                 }
                 useFlatList
                 disableRightSwipe={true}
-                data={this.state.entries}
+                data={this.state.results}
+                style={{marginTop:75}}
                 renderItem={ (data, rowMap) => (
                     <View>
                         <TouchableHighlight
@@ -274,9 +303,22 @@ class ViewEntries extends Component {
                 keyExtractor={() => Math.random().toString(36).substr(2, 9)}
 
             />
+                <SearchBar
+                    ref={(ref) => this.searchBar = ref}
+                    data={this.state.entries}
+                    handleResults={this._handleResults}
+                    showOnLoad
+                    clearOnShow
+                    hideBack
+                    autoCapitalize={'none'}
+                    autoCorrect={false}
+                    allDataOnEmptySearch={true}
+                />
                 {this.totalPart(this.state.entries)}
+                {this.pieChartPart(this.state.entries)}
 
-            </View>
+
+            </ScrollView>
 
         )
     }

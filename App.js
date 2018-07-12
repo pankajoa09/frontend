@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 
 import Home from './Components/Home';
 import ViewLedgers from './Components/ViewLedgers';
-import CreateEntry from './Components/CreateEntry';
+//import CreateEntry from './Components/CreateEntry';
 import EditEntryDetails from './Components/EditEntryDetails';
 import Search from './Components/Search';
 import ViewEntries from './Components/ViewEntries';
@@ -16,7 +16,9 @@ import ViewEntryDetails from './Components/ViewEntryDetails';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { NavigationComponent } from 'react-native-material-bottom-navigation'
 import PhotoUploadScreen from './Components/PhotoUploadScreen';
-import Example from './Components/CreateEntryWithAutoAttempt';
+import CreateEntry from './Components/CreateEntryWithAutoAttempt';
+import SearchBar from 'react-native-searchbar';
+import {View} from 'react-native';
 
 
 
@@ -116,7 +118,9 @@ const TabNav = TabNavigator(
 export default class App extends Component {
 
     render() {
-        return <TabNav/>;
+        return (
+            <TabNav/>
+        );
     }
 }
 

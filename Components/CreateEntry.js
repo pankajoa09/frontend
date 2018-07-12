@@ -88,6 +88,8 @@ const options = {
     },
 };
 
+
+
 class CreateEntry extends Component {
 
     static navigationOptions = ({ navigation }) => {

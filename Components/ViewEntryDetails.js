@@ -10,6 +10,7 @@ import entry_details from '../styleSheets/EntryDetails_style';
 
 import currentServerAddress from '../currentServerAddress'
 const address= currentServerAddress.address();
+import HelperFunctions from './HelperFunctions';
 
 
 
@@ -113,6 +114,7 @@ class ViewEntryDetails extends Component {
                     style: 'currency',
                     currency: entry.Currency.toString()
                 }).format(Number(entry.Amount))}</Text>
+                <Text style={entry_details.data}>{HelperFunctions.displayCurrency(entry.Amount,entry.Currency)}</Text>
 
 
                 <Text style={entry_details.label}>Date</Text>
